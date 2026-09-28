@@ -313,11 +313,23 @@ public class ReworkedEnchantmentScreen extends AbstractContainerScreen<ReworkedE
 			return;
 		}
 
-		lines.add(Component.translatable("enchantingrework.tooltip.resonance", books).withStyle(ChatFormatting.AQUA));
+		int max = EnchantingRework.CONFIG.resonanceMaxBooksPerEnchantment;
+		lines.add(Component.translatable("enchantingrework.tooltip.resonance", books, max).withStyle(ChatFormatting.AQUA));
 		int shown = 0;
 		for (EnchantingLogic.ResonanceEntry entry : this.menu.getTopResonance()) {
-			lines.add(Component.translatable("enchantingrework.tooltip.resonance.entry", entry.enchantment().value().description(), entry.books())
-				.withStyle(ChatFormatting.DARK_AQUA));
+			Component name = entry.enchantment().value().description();
+			int counted = Math.min(entry.books(), max);
+			Component line;
+			if (entry.books() > max) {
+				line = Component.translatable("enchantingrework.tooltip.resonance.entry.over", name, counted, max, entry.books() - max)
+					.withStyle(ChatFormatting.GOLD);
+			} else if (entry.books() == max) {
+				line = Component.translatable("enchantingrework.tooltip.resonance.entry.max", name, counted, max).withStyle(ChatFormatting.GOLD);
+			} else {
+				line = Component.translatable("enchantingrework.tooltip.resonance.entry", name, counted, max).withStyle(ChatFormatting.DARK_AQUA);
+			}
+
+			lines.add(line);
 			shown += entry.books();
 		}
 
