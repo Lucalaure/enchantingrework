@@ -30,8 +30,11 @@ public class EnchantingConfig {
 	public int[] tierMaxExtras = {0, 1, 2};
 	/** Highest level a random extra can roll at each tier. */
 	public int[] tierMaxExtraLevel = {1, 1, 2};
-	/** Catalysts used up by each tier's row. */
-	public int[] tierCatalystCost = {1, 2, 3};
+	/**
+	 * Lapis AND catalysts a catalyst enchant uses up, by the level of the main enchantment (index 0 is level I).
+	 * Levels past the end of the list keep growing the same way (each adds the previous two).
+	 */
+	public int[] materialCostByLevel = {1, 2, 3, 5, 8};
 	/** Chance that each available extra slot actually rolls an extra. */
 	public float extraChance = 0.5F;
 
@@ -60,6 +63,29 @@ public class EnchantingConfig {
 	 * (a normal bookshelf takes 3 books to craft). 0 disables it.
 	 */
 	public int chiseledShelfMinBooks = 3;
+
+	/** Lapis and catalysts needed for a main enchantment of {@code level}. */
+	public int materialCost(int level) {
+		if (level <= 0) {
+			return 0;
+		}
+
+		int[] costs = this.materialCostByLevel;
+		if (level <= costs.length) {
+			return Math.max(1, costs[level - 1]);
+		}
+
+		// Modded enchantments above the list: continue the curve.
+		int previous = costs.length >= 2 ? costs[costs.length - 2] : 1;
+		int current = costs.length >= 1 ? costs[costs.length - 1] : 1;
+		for (int l = costs.length; l < level; l++) {
+			int next = previous + current;
+			previous = current;
+			current = next;
+		}
+
+		return Math.max(1, current);
+	}
 
 	public int tierCount() {
 		return Math.min(this.tierPlayerLevel.length, Math.min(this.tierBookshelves.length, this.tierMaxMainLevel.length));

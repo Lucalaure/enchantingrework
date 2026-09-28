@@ -11,7 +11,8 @@ First release, for Minecraft 26.3 (Fabric).
 - Each tier caps enchantment levels at II / III / the enchantment's max and allows 0 / 1 / 2 random extras.
 - **Catalyst slot:** 14 catalysts (quartz, redstone, obsidian, emerald, cobweb, blaze powder, glistering melon, fermented spider eye,
   slime ball, iron ingot, gunpowder, armadillo scute, feather, prismarine crystals) guarantee a themed enchantment.
-  Rows I / II / III use 1 / 2 / 3 catalysts.
+  A catalyst enchant uses equal amounts of lapis and catalysts, climbing with the enchantment level:
+  1 / 2 / 3 / 5 / 8 for levels I–V (Sharpness V = 8 quartz + 8 lapis).
 - **No catalyst:** vanilla random rolls, inside the tier system.
 - **Bookshelf resonance:** enchanted books in chiseled bookshelves near the table raise the odds of their enchantments.
   Changing the books re-rolls the table; putting the same books back gives the same roll.

@@ -18,9 +18,9 @@ The enchanting table runs on four levers:
 2. **A catalyst guarantees the enchantment.** A third slot (where the book used to float) takes one catalyst. The item decides which
    enchantment of the theme it gets, and **every row** gives that enchantment. You pick the row:
    tier I gives level II, tier II level III, tier III the enchantment's max, with 0 / 1 / 2 chances at a random extra.
-   Rows I / II / III use up 1 / 2 / 3 catalysts.
-3. **Lapis and XP pay for it.** A row costs lapis equal to the enchantment level, plus 2 XP levels per enchantment level
-   (Sharpness V = 5 lapis, 10 levels). **Without a catalyst, the rows are vanilla random rolls inside the tier system**: row N unlocks
+3. **Lapis, catalysts and XP pay for it.** A catalyst row uses the same number of lapis and catalysts, climbing with the
+   enchantment level: 1 / 2 / 3 / 5 / 8 for levels I–V (`materialCostByLevel`). It also costs 2 XP levels per enchantment
+   level (Sharpness V = 8 quartz + 8 lapis + 10 levels). **Without a catalyst, the rows are vanilla random rolls inside the tier system**: row N unlocks
    with tier N and caps every enchantment it rolls at that tier's level, bookshelves set each row's power, rows cost 1 / 2 / 3 levels
    and lapis, and hovering a row shows the vanilla clue ("Sharpness III . . . ?").
 

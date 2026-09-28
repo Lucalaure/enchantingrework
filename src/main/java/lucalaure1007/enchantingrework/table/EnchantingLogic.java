@@ -36,10 +36,10 @@ import java.util.Set;
 /**
  * The four levers of the reworked table:
  * <ol>
- *   <li>player level + bookshelves pick the tier,</li>
- *   <li>lapis sets the level of the main enchantment,</li>
- *   <li>a catalyst picks the main enchantment,</li>
- *   <li>enchanted books in nearby chiseled bookshelves steer the random extras.</li>
+ *   <li>player level + bookshelves unlock the tiers, and each tier caps the enchantment level,</li>
+ *   <li>a catalyst guarantees the main enchantment,</li>
+ *   <li>lapis and catalysts pay for it, in equal amounts that climb with the enchantment level,</li>
+ *   <li>enchanted books in nearby chiseled bookshelves steer the random picks.</li>
  * </ol>
  */
 public final class EnchantingLogic {
@@ -207,7 +207,8 @@ public final class EnchantingLogic {
 			int enchantLevel = maxMainLevel(tier, main);
 			int xpCost = config.xpPerEnchantmentLevel * enchantLevel + (enchanted ? passPenalty(passes) : 0);
 			int maxExtras = EnchantingConfig.at(config.tierMaxExtras, tier);
-			int catalystCost = Math.max(1, EnchantingConfig.at(config.tierCatalystCost, tier));
+			// Lapis and catalysts cost the same, and climb steeply with the enchantment's level.
+			int materialCost = config.materialCost(enchantLevel);
 			anyExtras = Math.max(anyExtras, maxExtras);
 
 			TableStatus status = TableStatus.READY;
@@ -221,13 +222,13 @@ public final class EnchantingLogic {
 				status = TableStatus.ALREADY_STRONGER;
 			} else if (!compatible) {
 				status = TableStatus.INCOMPATIBLE;
-			} else if (lapisCount < enchantLevel) {
+			} else if (lapisCount < materialCost) {
 				status = TableStatus.NEED_LAPIS;
-			} else if (catalystCount < catalystCost) {
+			} else if (catalystCount < materialCost) {
 				status = TableStatus.NEED_CATALYST;
 			}
 
-			options.add(new Option(tier, status, enchantLevel, xpCost, enchantLevel, maxExtras, 0, 0, null, 0, catalystCost));
+			options.add(new Option(tier, status, enchantLevel, xpCost, materialCost, maxExtras, 0, 0, null, 0, materialCost));
 		}
 
 		Holder<Enchantment> hint = null;
