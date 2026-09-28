@@ -1,11 +1,17 @@
-# Publishes a GitHub release with the built jar whenever a version tag (e.g. v1.0.0) is pushed.
-# The tag must match `version` in gradle.properties; the release notes come from that version's
-# section in CHANGELOG.md.
+# Builds the mod and attaches the jar to a GitHub release. Two ways to release:
+#
+# 1. Push a version tag (e.g. `git tag v1.0.0 && git push origin v1.0.0`). The tag must match `version` in
+#    gradle.properties; a release is created with that version's section of CHANGELOG.md as its notes.
+# 2. Create and publish a release on the GitHub website (any tag name). The jar is attached to it.
+#
+# GitHub always adds "Source code" archives to releases; the jar is listed above them.
 
 name: release
 on:
   push:
     tags: ['v*']
+  release:
+    types: [published]
 
 permissions:
   contents: write
@@ -26,6 +32,7 @@ jobs:
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: check tag matches mod version
+        if: github.event_name == 'push'
         run: |
           version=$(grep '^version=' gradle.properties | cut -d= -f2)
           if [ "v$version" != "$GITHUB_REF_NAME" ]; then
@@ -35,6 +42,7 @@ jobs:
       - name: build
         run: ./gradlew build
       - name: extract release notes
+        if: github.event_name == 'push'
         run: |
           version=${GITHUB_REF_NAME#v}
           awk -v v="$version" '
@@ -42,11 +50,19 @@ jobs:
             found { print }
           ' CHANGELOG.md > release-notes.md
           test -s release-notes.md || echo "See CHANGELOG.md" > release-notes.md
-      - name: create release
+      - name: create release from tag
+        if: github.event_name == 'push'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" \
             --title "Enchanting Rework ${GITHUB_REF_NAME#v}" \
             --notes-file release-notes.md \
+            $(ls build/libs/*.jar | grep -v -- '-sources.jar')
+      - name: attach jar to published release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${{ github.event.release.tag_name }}" --clobber \
             $(ls build/libs/*.jar | grep -v -- '-sources.jar')

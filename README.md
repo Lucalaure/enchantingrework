@@ -95,9 +95,13 @@ extra chance, re-enchant penalty and pass limit, resonance radius and weight, an
 
 ## Releasing
 
-1. Set `version` in `gradle.properties` and add a matching `## [x.y.z]` section to [CHANGELOG.md](CHANGELOG.md).
-2. Commit, then tag and push: `git tag vX.Y.Z && git push origin vX.Y.Z`.
-3. GitHub Actions builds the mod and publishes a release with the jar and that version's changelog notes.
+Either way, GitHub Actions builds the mod and attaches the jar to the release (GitHub also always adds
+"Source code" archives; those can't be removed).
+
+- **From the command line:** set `version` in `gradle.properties`, add a matching `## [x.y.z]` section to
+  [CHANGELOG.md](CHANGELOG.md), commit, then `git tag vX.Y.Z && git push origin vX.Y.Z`. The release is created
+  for you with that changelog section as its notes.
+- **From the GitHub website:** create and publish a release as usual. The jar appears on it a couple of minutes later.
 
 ## Building
 
