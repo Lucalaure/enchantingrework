@@ -277,11 +277,17 @@ public class ReworkedEnchantmentScreen extends AbstractContainerScreen<ReworkedE
 			.withStyle(ChatFormatting.WHITE));
 		lines.add(Component.translatable("enchantingrework.tooltip.gamble.desc").withStyle(ChatFormatting.DARK_PURPLE));
 		this.addResonanceLine(lines);
+		lines.add(CommonComponents.EMPTY);
+		lines.add(this.tierRequirement(row + 1));
+		if (this.menu.getRowStatus(row) == TableStatus.TIER_LOCKED) {
+			lines.add(Component.translatable(TableStatus.TIER_LOCKED.translationKey()).withStyle(ChatFormatting.RED));
+			return lines;
+		}
+
 		if (this.minecraft.player.hasInfiniteMaterials()) {
 			return lines;
 		}
 
-		lines.add(CommonComponents.EMPTY);
 		int requirement = this.menu.getLevelRequirement(row);
 		if (this.minecraft.player.experienceLevel < requirement) {
 			lines.add(Component.translatable("container.enchant.level.requirement", requirement).withStyle(ChatFormatting.RED));

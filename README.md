@@ -9,12 +9,14 @@ A Fabric mod for Minecraft 26.3 that implements the **Enchanting** section of
    enchantment of the theme it gets, and **every row** gives that enchantment. You pick the row:
    tier I gives level II, tier II level III, tier III the enchantment's max, with 0 / 1 / 2 chances at a random extra.
 3. **Lapis and XP pay for it.** A row costs lapis equal to the enchantment level, plus 2 XP levels per enchantment level
-   (Sharpness V = 5 lapis, 10 levels). **Without a catalyst, the table works exactly like vanilla**: bookshelves set each row's
-   level requirement, rows cost 1 / 2 / 3 levels and lapis, and hovering a row shows the vanilla clue ("Sharpness III . . . ?").
+   (Sharpness V = 5 lapis, 10 levels). **Without a catalyst, the rows are vanilla random rolls inside the tier system**: row N unlocks
+   with tier N and caps every enchantment it rolls at that tier's level, bookshelves set each row's power, rows cost 1 / 2 / 3 levels
+   and lapis, and hovering a row shows the vanilla clue ("Sharpness III . . . ?").
 
 **Bookshelves:** normal bookshelves count as in vanilla, and so do chiseled bookshelves holding at least 3 books (`chiseledShelfMinBooks`).
 The table's title bar always shows your tier and how many shelves it sees.
-4. **Bookshelf resonance steers the extras.** Enchanted books in chiseled bookshelves near the table raise the odds of their enchantments showing up as extras.
+4. **Bookshelf resonance steers the odds.** Enchanted books in chiseled bookshelves near the table raise the odds of their enchantments showing up,
+   both in no-catalyst rolls and as catalyst extras. Resonance only changes *which* enchantments appear; the tier still caps their level.
    The books aren't used up. The table shows the most likely extra as a hint.
 
 **Re-enchanting:** at tier III, an enchanted item can go back on the table to add or upgrade one main enchantment. Each pass costs more

@@ -213,8 +213,10 @@ public final class EnchantingLogic {
 	}
 
 	/**
-	 * No catalyst: exactly vanilla's table. Bookshelves set each row's power and level requirement, the row costs
-	 * 1 / 2 / 3 levels and lapis, and everything is seeded by the player's enchantment seed so the hints are honest.
+	 * No catalyst: vanilla's table inside the tier system. Row N is tier N: it unlocks with that tier and caps every
+	 * enchantment it rolls at the tier's level (II / III / max). Bookshelves set each row's power as in vanilla,
+	 * resonance steers which enchantments come up, rows cost 1 / 2 / 3 levels and lapis, and everything is seeded
+	 * by the player's enchantment seed so the hints are honest.
 	 */
 	private static Preview vanillaRolls(
 		Level level, Player player, ItemStack item, int lapisCount, int playerTier, int bookshelves, int passes,
@@ -238,24 +240,33 @@ public final class EnchantingLogic {
 			}
 		}
 
+		EnchantingConfig config = EnchantingRework.CONFIG;
 		for (int row = 0; row < ROWS; row++) {
-			int cost = row + 1;
+			int tier = row + 1;
+			int cost = tier;
 			int power = powers[row];
 			if (power <= 0) {
-				options.add(Option.unavailable(cost, TableStatus.NO_OFFER));
+				options.add(Option.unavailable(tier, TableStatus.NO_OFFER));
 				continue;
 			}
 
 			RandomSource rowRandom = vanillaRowRandom(player, row);
-			List<EnchantmentInstance> list = vanillaList(level.registryAccess(), item, power, rowRandom, resonance);
+			List<EnchantmentInstance> list = vanillaList(level.registryAccess(), item, power, tier, rowRandom, resonance);
 			if (list.isEmpty()) {
-				options.add(Option.unavailable(cost, TableStatus.NO_OFFER));
+				options.add(Option.unavailable(tier, TableStatus.NO_OFFER));
 				continue;
 			}
 
 			EnchantmentInstance clue = list.get(rowRandom.nextInt(list.size()));
-			TableStatus status = lapisCount < cost ? TableStatus.NEED_LAPIS : TableStatus.READY;
-			options.add(new Option(cost, status, 0, cost, cost, 0, power, power, clue.enchantment(), clue.level()));
+			TableStatus status = TableStatus.READY;
+			if (tier > playerTier) {
+				status = TableStatus.TIER_LOCKED;
+			} else if (lapisCount < cost) {
+				status = TableStatus.NEED_LAPIS;
+			}
+
+			int requirement = Math.max(power, EnchantingConfig.at(config.tierPlayerLevel, tier));
+			options.add(new Option(tier, status, 0, cost, cost, 0, requirement, power, clue.enchantment(), clue.level()));
 		}
 
 		return new Preview(TableMode.GAMBLE, TableStatus.READY, null, null, playerTier, bookshelves, passes, options, resonantBooks);
@@ -266,7 +277,7 @@ public final class EnchantingLogic {
 	}
 
 	private static List<EnchantmentInstance> vanillaList(
-		RegistryAccess access, ItemStack item, int power, RandomSource random, Object2IntMap<Holder<Enchantment>> resonance
+		RegistryAccess access, ItemStack item, int power, int tier, RandomSource random, Object2IntMap<Holder<Enchantment>> resonance
 	) {
 		Optional<HolderSet.Named<Enchantment>> tag = access.lookupOrThrow(Registries.ENCHANTMENT).get(EnchantmentTags.IN_ENCHANTING_TABLE);
 		if (tag.isEmpty()) {
@@ -278,6 +289,8 @@ public final class EnchantingLogic {
 			list.remove(random.nextInt(list.size()));
 		}
 
+		// Resonance picks which enchantments; the tier alone decides how strong they can be.
+		list.replaceAll(e -> new EnchantmentInstance(e.enchantment(), Math.min(e.level(), maxMainLevel(tier, e.enchantment()))));
 		return list;
 	}
 
@@ -335,7 +348,7 @@ public final class EnchantingLogic {
 	/** The enchantments row {@code option} applies, rolled with {@code random}. Empty means nothing happens. */
 	public static List<EnchantmentInstance> roll(Level level, BlockPos pos, Player player, ItemStack item, Preview preview, Option option, RandomSource random) {
 		return switch (preview.mode()) {
-			case GAMBLE -> vanillaList(level.registryAccess(), item, option.power(), vanillaRowRandom(player, option.tier() - 1), resonance(level, pos));
+			case GAMBLE -> vanillaList(level.registryAccess(), item, option.power(), option.tier(), vanillaRowRandom(player, option.tier() - 1), resonance(level, pos));
 			case CATALYST -> rollCatalyst(level, pos, item, preview.main(), option, random);
 			case NONE -> List.of();
 		};
