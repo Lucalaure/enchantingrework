@@ -39,5 +39,6 @@
   "enchantingrework.header": "%s · %s shelves",
   "enchantingrework.header.tier": "Tier %s",
   "enchantingrework.header.no_tier": "No tier",
-  "enchantingrework.status.no_offer": "Nothing to roll"
+  "enchantingrework.status.no_offer": "Nothing to roll",
+  "enchantingrework.tooltip.resonance": "Resonating books: %s"
 }

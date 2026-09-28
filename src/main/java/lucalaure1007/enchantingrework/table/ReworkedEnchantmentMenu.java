@@ -53,7 +53,8 @@ public class ReworkedEnchantmentMenu extends AbstractContainerMenu {
 	private static final int D_SHELVES = 5;
 	private static final int D_PASSES = 6;
 	private static final int D_SEED = 7;
-	private static final int D_ROWS = 8;
+	private static final int D_RESONANCE = 8;
+	private static final int D_ROWS = 9;
 	private static final int R_STATUS = 0;
 	private static final int R_LEVEL = 1;
 	private static final int R_XP = 2;
@@ -152,6 +153,7 @@ public class ReworkedEnchantmentMenu extends AbstractContainerMenu {
 			this.data.set(D_SHELVES, preview.bookshelves());
 			this.data.set(D_PASSES, preview.passes());
 			this.data.set(D_SEED, this.player.getEnchantmentSeed());
+			this.data.set(D_RESONANCE, preview.resonantBooks());
 			for (int row = 0; row < EnchantingLogic.ROWS; row++) {
 				EnchantingLogic.Option option = preview.option(row);
 				this.data.set(rowIndex(row, R_STATUS), option.status().ordinal());
@@ -302,6 +304,11 @@ public class ReworkedEnchantmentMenu extends AbstractContainerMenu {
 
 	public int getEnchantmentSeed() {
 		return this.data.get(D_SEED);
+	}
+
+	/** Enchanted books in chiseled bookshelves around the table that count for resonance. */
+	public int getResonantBooks() {
+		return this.data.get(D_RESONANCE);
 	}
 
 	public int getTier() {

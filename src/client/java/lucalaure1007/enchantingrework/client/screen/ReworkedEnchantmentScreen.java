@@ -227,6 +227,7 @@ public class ReworkedEnchantmentScreen extends AbstractContainerScreen<ReworkedE
 				lines.add(Component.translatable("enchantingrework.tooltip.extras", extras).withStyle(ChatFormatting.GRAY));
 				this.menu.getHint().ifPresent(hint ->
 					lines.add(Component.translatable("enchantingrework.tooltip.hint", hint.value().description()).withStyle(ChatFormatting.GRAY)));
+				this.addResonanceLine(lines);
 			} else {
 				lines.add(Component.translatable("enchantingrework.tooltip.no_extras").withStyle(ChatFormatting.GRAY));
 			}
@@ -275,6 +276,7 @@ public class ReworkedEnchantmentScreen extends AbstractContainerScreen<ReworkedE
 		lines.add(Component.translatable("container.enchant.clue", Enchantment.getFullname(clue.get(), this.menu.getClueLevel(row)))
 			.withStyle(ChatFormatting.WHITE));
 		lines.add(Component.translatable("enchantingrework.tooltip.gamble.desc").withStyle(ChatFormatting.DARK_PURPLE));
+		this.addResonanceLine(lines);
 		if (this.minecraft.player.hasInfiniteMaterials()) {
 			return lines;
 		}
@@ -292,6 +294,13 @@ public class ReworkedEnchantmentScreen extends AbstractContainerScreen<ReworkedE
 			.withStyle(enoughLapis ? ChatFormatting.GRAY : ChatFormatting.RED));
 		lines.add(Component.translatable(cost == 1 ? "container.enchant.level.one" : "container.enchant.level.many", cost).withStyle(ChatFormatting.GRAY));
 		return lines;
+	}
+
+	private void addResonanceLine(final List<Component> lines) {
+		int books = this.menu.getResonantBooks();
+		if (books > 0) {
+			lines.add(Component.translatable("enchantingrework.tooltip.resonance", books).withStyle(ChatFormatting.AQUA));
+		}
 	}
 
 	private Component tierRequirement(final int tier) {

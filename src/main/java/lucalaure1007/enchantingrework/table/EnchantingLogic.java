@@ -12,7 +12,9 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.EnchantmentTags;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.random.WeightedRandom;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -81,7 +83,8 @@ public final class EnchantingLogic {
 		int playerTier,
 		int bookshelves,
 		int passes,
-		List<Option> options
+		List<Option> options,
+		int resonantBooks
 	) {
 		static Preview empty(TableStatus status, int playerTier, int bookshelves) {
 			List<Option> options = new ArrayList<>();
@@ -89,7 +92,7 @@ public final class EnchantingLogic {
 				options.add(Option.unavailable(t, status));
 			}
 
-			return new Preview(TableMode.NONE, status, null, null, playerTier, bookshelves, 0, options);
+			return new Preview(TableMode.NONE, status, null, null, playerTier, bookshelves, 0, options, 0);
 		}
 
 		public Option option(int row) {
@@ -156,9 +159,11 @@ public final class EnchantingLogic {
 		int passes = passesOf(item);
 		Catalyst catalyst = Catalyst.find(access, catalystStack);
 		List<Option> options = new ArrayList<>();
+		Object2IntMap<Holder<Enchantment>> resonance = resonance(level, pos);
+		int resonantBooks = resonance.values().intStream().sum();
 
 		if (catalyst == null) {
-			return vanillaRolls(level, player, item, lapisCount, playerTier, bookshelves, passes);
+			return vanillaRolls(level, player, item, lapisCount, playerTier, bookshelves, passes, resonance, resonantBooks);
 		}
 
 		Optional<Holder<Enchantment>> resolved = catalyst.resolveFor(access, item);
@@ -201,24 +206,27 @@ public final class EnchantingLogic {
 		Holder<Enchantment> hint = null;
 		if (anyExtras > 0) {
 			others.add(main);
-			hint = mostLikelyExtra(extraPool(level, pos, item, others));
+			hint = mostLikelyExtra(extraPool(level, item, others, resonance));
 		}
 
-		return new Preview(TableMode.CATALYST, TableStatus.READY, main, hint, playerTier, bookshelves, passes, options);
+		return new Preview(TableMode.CATALYST, TableStatus.READY, main, hint, playerTier, bookshelves, passes, options, resonantBooks);
 	}
 
 	/**
 	 * No catalyst: exactly vanilla's table. Bookshelves set each row's power and level requirement, the row costs
 	 * 1 / 2 / 3 levels and lapis, and everything is seeded by the player's enchantment seed so the hints are honest.
 	 */
-	private static Preview vanillaRolls(Level level, Player player, ItemStack item, int lapisCount, int playerTier, int bookshelves, int passes) {
+	private static Preview vanillaRolls(
+		Level level, Player player, ItemStack item, int lapisCount, int playerTier, int bookshelves, int passes,
+		Object2IntMap<Holder<Enchantment>> resonance, int resonantBooks
+	) {
 		List<Option> options = new ArrayList<>();
 		if (item.isEnchanted()) {
 			for (int row = 1; row <= ROWS; row++) {
 				options.add(Option.unavailable(row, TableStatus.GAMBLE_FRESH_ONLY));
 			}
 
-			return new Preview(TableMode.GAMBLE, TableStatus.GAMBLE_FRESH_ONLY, null, null, playerTier, bookshelves, passes, options);
+			return new Preview(TableMode.GAMBLE, TableStatus.GAMBLE_FRESH_ONLY, null, null, playerTier, bookshelves, passes, options, resonantBooks);
 		}
 
 		RandomSource random = RandomSource.create(player.getEnchantmentSeed());
@@ -239,7 +247,7 @@ public final class EnchantingLogic {
 			}
 
 			RandomSource rowRandom = vanillaRowRandom(player, row);
-			List<EnchantmentInstance> list = vanillaList(level.registryAccess(), item, power, rowRandom);
+			List<EnchantmentInstance> list = vanillaList(level.registryAccess(), item, power, rowRandom, resonance);
 			if (list.isEmpty()) {
 				options.add(Option.unavailable(cost, TableStatus.NO_OFFER));
 				continue;
@@ -250,25 +258,72 @@ public final class EnchantingLogic {
 			options.add(new Option(cost, status, 0, cost, cost, 0, power, power, clue.enchantment(), clue.level()));
 		}
 
-		return new Preview(TableMode.GAMBLE, TableStatus.READY, null, null, playerTier, bookshelves, passes, options);
+		return new Preview(TableMode.GAMBLE, TableStatus.READY, null, null, playerTier, bookshelves, passes, options, resonantBooks);
 	}
 
 	private static RandomSource vanillaRowRandom(Player player, int row) {
 		return RandomSource.create(player.getEnchantmentSeed() + row);
 	}
 
-	private static List<EnchantmentInstance> vanillaList(RegistryAccess access, ItemStack item, int power, RandomSource random) {
+	private static List<EnchantmentInstance> vanillaList(
+		RegistryAccess access, ItemStack item, int power, RandomSource random, Object2IntMap<Holder<Enchantment>> resonance
+	) {
 		Optional<HolderSet.Named<Enchantment>> tag = access.lookupOrThrow(Registries.ENCHANTMENT).get(EnchantmentTags.IN_ENCHANTING_TABLE);
 		if (tag.isEmpty()) {
 			return new ArrayList<>();
 		}
 
-		List<EnchantmentInstance> list = EnchantmentHelper.selectEnchantment(random, item, power, tag.get().stream());
+		List<EnchantmentInstance> list = selectEnchantment(random, item, power, tag.get().stream(), resonance);
 		if (item.is(Items.BOOK) && list.size() > 1) {
 			list.remove(random.nextInt(list.size()));
 		}
 
 		return list;
+	}
+
+	/**
+	 * Vanilla's {@link EnchantmentHelper#selectEnchantment}, step for step, except each enchantment's weight gets the
+	 * resonance bonus. With no resonating books it makes the same choices as vanilla.
+	 */
+	private static List<EnchantmentInstance> selectEnchantment(
+		RandomSource random, ItemStack item, int power, java.util.stream.Stream<Holder<Enchantment>> source, Object2IntMap<Holder<Enchantment>> resonance
+	) {
+		List<EnchantmentInstance> results = new ArrayList<>();
+		var enchantable = item.get(DataComponents.ENCHANTABLE);
+		if (enchantable == null) {
+			return results;
+		}
+
+		power += 1 + random.nextInt(enchantable.value() / 4 + 1) + random.nextInt(enchantable.value() / 4 + 1);
+		float randomSpan = (random.nextFloat() + random.nextFloat() - 1.0F) * 0.15F;
+		power = Mth.clamp(Math.round(power + power * randomSpan), 1, Integer.MAX_VALUE);
+		List<EnchantmentInstance> available = EnchantmentHelper.getAvailableEnchantmentResults(power, item, source);
+		if (available.isEmpty()) {
+			return results;
+		}
+
+		java.util.function.ToIntFunction<EnchantmentInstance> weight = instance -> instance.weight() + resonanceBonus(resonance, instance.enchantment());
+		WeightedRandom.getRandomItem(random, available, weight).ifPresent(results::add);
+
+		while (random.nextInt(50) <= power) {
+			if (!results.isEmpty()) {
+				EnchantmentHelper.filterCompatibleEnchantments(available, results.getLast());
+			}
+
+			if (available.isEmpty()) {
+				break;
+			}
+
+			WeightedRandom.getRandomItem(random, available, weight).ifPresent(results::add);
+			power /= 2;
+		}
+
+		return results;
+	}
+
+	private static int resonanceBonus(Object2IntMap<Holder<Enchantment>> resonance, Holder<Enchantment> enchantment) {
+		EnchantingConfig config = EnchantingRework.CONFIG;
+		return Math.min(resonance.getInt(enchantment), config.resonanceMaxBooksPerEnchantment) * config.resonanceWeightPerBook;
 	}
 
 	public static int maxMainLevel(int tier, Holder<Enchantment> enchantment) {
@@ -280,7 +335,7 @@ public final class EnchantingLogic {
 	/** The enchantments row {@code option} applies, rolled with {@code random}. Empty means nothing happens. */
 	public static List<EnchantmentInstance> roll(Level level, BlockPos pos, Player player, ItemStack item, Preview preview, Option option, RandomSource random) {
 		return switch (preview.mode()) {
-			case GAMBLE -> vanillaList(level.registryAccess(), item, option.power(), vanillaRowRandom(player, option.tier() - 1));
+			case GAMBLE -> vanillaList(level.registryAccess(), item, option.power(), vanillaRowRandom(player, option.tier() - 1), resonance(level, pos));
 			case CATALYST -> rollCatalyst(level, pos, item, preview.main(), option, random);
 			case NONE -> List.of();
 		};
@@ -294,13 +349,14 @@ public final class EnchantingLogic {
 		Set<Holder<Enchantment>> taken = new HashSet<>(EnchantmentHelper.getEnchantmentsForCrafting(item).keySet());
 		taken.add(main);
 		int maxExtraLevel = Math.max(1, EnchantingConfig.at(config.tierMaxExtraLevel, option.tier()));
+		Object2IntMap<Holder<Enchantment>> resonance = resonance(level, pos);
 
 		for (int i = 0; i < option.maxExtras(); i++) {
 			if (random.nextFloat() >= config.extraChance) {
 				continue;
 			}
 
-			Object2IntMap<Holder<Enchantment>> pool = extraPool(level, pos, item, taken);
+			Object2IntMap<Holder<Enchantment>> pool = extraPool(level, item, taken, resonance);
 			Holder<Enchantment> pick = pickWeighted(pool, random);
 			if (pick == null) {
 				break;
@@ -318,15 +374,13 @@ public final class EnchantingLogic {
 	 * Enchantments that can appear as a random extra, with their odds. Only table enchantments qualify, so
 	 * treasure enchantments (Mending, Frost Walker, curses...) never appear and never resonate.
 	 */
-	public static Object2IntMap<Holder<Enchantment>> extraPool(Level level, BlockPos pos, ItemStack item, Set<Holder<Enchantment>> taken) {
+	public static Object2IntMap<Holder<Enchantment>> extraPool(Level level, ItemStack item, Set<Holder<Enchantment>> taken, Object2IntMap<Holder<Enchantment>> resonance) {
 		Object2IntMap<Holder<Enchantment>> pool = new Object2IntOpenHashMap<>();
 		Optional<HolderSet.Named<Enchantment>> tag = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(EnchantmentTags.IN_ENCHANTING_TABLE);
 		if (tag.isEmpty()) {
 			return pool;
 		}
 
-		EnchantingConfig config = EnchantingRework.CONFIG;
-		Object2IntMap<Holder<Enchantment>> resonance = resonance(level, pos);
 		boolean isBook = item.is(Items.BOOK);
 
 		for (Holder<Enchantment> enchantment : tag.get()) {
@@ -342,8 +396,7 @@ public final class EnchantingLogic {
 				continue;
 			}
 
-			int books = Math.min(resonance.getInt(enchantment), config.resonanceMaxBooksPerEnchantment);
-			pool.put(enchantment, enchantment.value().getWeight() + books * config.resonanceWeightPerBook);
+			pool.put(enchantment, enchantment.value().getWeight() + resonanceBonus(resonance, enchantment));
 		}
 
 		return pool;
