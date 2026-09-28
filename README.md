@@ -1,13 +1,24 @@
 # Enchanting Rework
 
 A Fabric mod for Minecraft 26.3 that implements the **Enchanting** section of
-`Minecraft Rebalance Mod — Design Outline.md`. The enchanting table runs on four levers:
+`Minecraft Rebalance Mod — Design Outline.md`.
+
+## Installing
+
+1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft 26.3 and put [Fabric API](https://modrinth.com/mod/fabric-api) in your `mods` folder.
+2. Download `enchantingrework-<version>.jar` from the [releases page](https://github.com/Lucalaure/enchantingrework/releases) and put it in `mods` too.
+3. For multiplayer, the server and every player need the mod.
+
+## How it works
+
+The enchanting table runs on four levers:
 
 1. **Three tier rows, like vanilla.** The table always shows three options, one per tier. Tier I needs level 5, tier II needs level 15
    and 8 shelves, tier III needs level 30 and 15 shelves. A row you haven't unlocked is greyed out, and its tooltip shows what it needs.
 2. **A catalyst guarantees the enchantment.** A third slot (where the book used to float) takes one catalyst. The item decides which
    enchantment of the theme it gets, and **every row** gives that enchantment. You pick the row:
    tier I gives level II, tier II level III, tier III the enchantment's max, with 0 / 1 / 2 chances at a random extra.
+   Rows I / II / III use up 1 / 2 / 3 catalysts.
 3. **Lapis and XP pay for it.** A row costs lapis equal to the enchantment level, plus 2 XP levels per enchantment level
    (Sharpness V = 5 lapis, 10 levels). **Without a catalyst, the rows are vanilla random rolls inside the tier system**: row N unlocks
    with tier N and caps every enchantment it rolls at that tier's level, bookshelves set each row's power, rows cost 1 / 2 / 3 levels
@@ -54,7 +65,20 @@ Catalysts are datapack entries, so packs can add or change them:
 }
 ```
 
-The first enchantment in the list that supports the item wins; books take the first entry.
+The first enchantment in the list that supports the item wins; books take the first entry. Entries can be enchantment
+tags (`"#mymod:blades"`); a tag expands to its members in order.
+
+**Adding enchantments from other mods:** every built-in catalyst ends with an empty tag named after its theme, for example
+`#enchantingrework:catalyst/edge`. To add your enchantment to the Edge theme, add it to that tag in a datapack or mod:
+
+`data/enchantingrework/tags/enchantment/catalyst/edge.json`:
+
+```json
+{ "values": ["mymod:serration"] }
+```
+
+It becomes a fallback for items none of the vanilla Edge enchantments fit. To make a brand-new catalyst, add a new catalyst file;
+its theme name shows as-is unless you add an `enchantingrework.theme.<theme>` translation.
 
 ## Config
 
@@ -68,6 +92,12 @@ extra chance, re-enchant penalty and pass limit, resonance radius and weight, an
 - `mixin/EnchantingTableBlockMixin` – makes the enchanting table open the reworked menu
 - `catalyst/Catalyst` – the synced `enchantingrework:catalyst` datapack registry
 - `client/screen/ReworkedEnchantmentScreen` – the table UI
+
+## Releasing
+
+1. Set `version` in `gradle.properties` and add a matching `## [x.y.z]` section to [CHANGELOG.md](CHANGELOG.md).
+2. Commit, then tag and push: `git tag vX.Y.Z && git push origin vX.Y.Z`.
+3. GitHub Actions builds the mod and publishes a release with the jar and that version's changelog notes.
 
 ## Building
 
