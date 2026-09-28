@@ -2,7 +2,10 @@ package lucalaure1007.enchantingrework.client;
 
 import lucalaure1007.enchantingrework.EnchantingRework;
 import lucalaure1007.enchantingrework.catalyst.Catalyst;
+import lucalaure1007.enchantingrework.client.render.ChiseledBookShelfGlintRenderer;
 import lucalaure1007.enchantingrework.client.screen.ReworkedEnchantmentScreen;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.world.level.block.entity.BlockEntityTypes;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -24,6 +27,7 @@ public class EnchantingReworkClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		MenuScreens.register(EnchantingRework.ENCHANTMENT_MENU, ReworkedEnchantmentScreen::new);
+		BlockEntityRenderers.register(BlockEntityTypes.CHISELED_BOOKSHELF, ChiseledBookShelfGlintRenderer::new);
 
 		// On a dedicated server, show the server's tiers and limits; restore our own config when we leave.
 		// In singleplayer the integrated server already shares this config, so there's nothing to swap.

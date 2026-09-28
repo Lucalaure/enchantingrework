@@ -24,6 +24,7 @@ First release, for Minecraft 26.3 (Fabric).
 - Catalyst items show their theme and possible enchantments in their tooltip.
 - Row tooltips show tier requirements, costs, likely extras and which enchantments are resonating.
 - The table's title bar shows your tier and bookshelf count.
+- Enchanted books in chiseled bookshelves shimmer with the enchantment glint.
 
 ### Configuration and data
 - Every number is in `config/enchantingrework.json`; servers send their config to players on join.
