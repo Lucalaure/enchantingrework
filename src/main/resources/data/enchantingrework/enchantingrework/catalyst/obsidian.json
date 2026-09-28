@@ -1,0 +1,7 @@
+{
+  "item": "minecraft:obsidian",
+  "theme": "endurance",
+  "enchantments": [
+    "minecraft:unbreaking"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "item": "minecraft:iron_ingot",
+  "theme": "guard",
+  "enchantments": [
+    "minecraft:protection"
+  ]
+}

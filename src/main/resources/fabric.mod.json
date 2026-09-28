@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "enchantingrework",
+	"version": "${version}",
+	"name": "Enchanting Rework",
+	"description": "Reworks the enchanting table around four levers: XP level sets the tier, lapis sets the level, a catalyst picks the enchantment, and enchanted books in chiseled bookshelves steer the random extras.",
+	"authors": [
+		"Seeklab"
+	],
+	"contact": {},
+	"license": "CC0-1.0",
+	"icon": "assets/enchantingrework/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"lucalaure1007.enchantingrework.EnchantingRework"
+		],
+		"client": [
+			"lucalaure1007.enchantingrework.client.EnchantingReworkClient"
+		],
+		"fabric-datagen": [
+			"lucalaure1007.enchantingrework.client.EnchantingReworkDataGenerator"
+		]
+	},
+	"mixins": [
+		"enchantingrework.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}

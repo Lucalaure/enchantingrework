@@ -1,0 +1,7 @@
+{
+  "item": "minecraft:cobweb",
+  "theme": "delicacy",
+  "enchantments": [
+    "minecraft:silk_touch"
+  ]
+}

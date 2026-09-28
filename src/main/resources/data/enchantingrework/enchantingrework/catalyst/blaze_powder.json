@@ -1,0 +1,9 @@
+{
+  "item": "minecraft:blaze_powder",
+  "theme": "fire",
+  "enchantments": [
+    "minecraft:fire_aspect",
+    "minecraft:flame",
+    "minecraft:fire_protection"
+  ]
+}

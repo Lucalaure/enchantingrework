@@ -1,0 +1,9 @@
+{
+  "item": "minecraft:quartz",
+  "theme": "edge",
+  "enchantments": [
+    "minecraft:sharpness",
+    "minecraft:power",
+    "minecraft:piercing"
+  ]
+}

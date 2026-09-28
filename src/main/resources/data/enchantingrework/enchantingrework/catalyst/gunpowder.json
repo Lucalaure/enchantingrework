@@ -1,0 +1,7 @@
+{
+  "item": "minecraft:gunpowder",
+  "theme": "blast",
+  "enchantments": [
+    "minecraft:blast_protection"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "item": "minecraft:prismarine_crystals",
+  "theme": "water",
+  "enchantments": [
+    "minecraft:respiration",
+    "minecraft:depth_strider",
+    "minecraft:impaling"
+  ]
+}

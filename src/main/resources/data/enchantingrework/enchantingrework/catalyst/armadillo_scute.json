@@ -1,0 +1,7 @@
+{
+  "item": "minecraft:armadillo_scute",
+  "theme": "deflect",
+  "enchantments": [
+    "minecraft:projectile_protection"
+  ]
+}
