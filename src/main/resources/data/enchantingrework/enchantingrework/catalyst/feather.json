@@ -2,6 +2,7 @@
   "item": "minecraft:feather",
   "theme": "air",
   "enchantments": [
-    "minecraft:feather_falling"
+    "minecraft:feather_falling",
+    "#enchantingrework:catalyst/air"
   ]
 }

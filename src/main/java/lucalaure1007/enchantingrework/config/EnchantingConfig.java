@@ -30,6 +30,8 @@ public class EnchantingConfig {
 	public int[] tierMaxExtras = {0, 1, 2};
 	/** Highest level a random extra can roll at each tier. */
 	public int[] tierMaxExtraLevel = {1, 1, 2};
+	/** Catalysts used up by each tier's row. */
+	public int[] tierCatalystCost = {1, 2, 3};
 	/** Chance that each available extra slot actually rolls an extra. */
 	public float extraChance = 0.5F;
 
@@ -70,6 +72,15 @@ public class EnchantingConfig {
 		}
 
 		return values[Math.min(tier, values.length) - 1];
+	}
+
+	public String toJson() {
+		return GSON.toJson(this);
+	}
+
+	public static EnchantingConfig fromJson(String json) {
+		EnchantingConfig config = GSON.fromJson(json, EnchantingConfig.class);
+		return config == null ? new EnchantingConfig() : config;
 	}
 
 	public static EnchantingConfig load() {

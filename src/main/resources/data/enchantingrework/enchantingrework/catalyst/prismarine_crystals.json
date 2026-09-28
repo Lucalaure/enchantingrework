@@ -4,6 +4,7 @@
   "enchantments": [
     "minecraft:respiration",
     "minecraft:depth_strider",
-    "minecraft:impaling"
+    "minecraft:impaling",
+    "#enchantingrework:catalyst/water"
   ]
 }

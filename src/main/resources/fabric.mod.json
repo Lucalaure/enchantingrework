@@ -7,7 +7,11 @@
 	"authors": [
 		"Seeklab"
 	],
-	"contact": {},
+	"contact": {
+		"homepage": "https://github.com/Lucalaure/enchantingrework",
+		"sources": "https://github.com/Lucalaure/enchantingrework",
+		"issues": "https://github.com/Lucalaure/enchantingrework/issues"
+	},
 	"license": "CC0-1.0",
 	"icon": "assets/enchantingrework/icon.png",
 	"environment": "*",

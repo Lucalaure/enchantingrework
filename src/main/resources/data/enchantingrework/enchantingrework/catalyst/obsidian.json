@@ -2,6 +2,7 @@
   "item": "minecraft:obsidian",
   "theme": "endurance",
   "enchantments": [
-    "minecraft:unbreaking"
+    "minecraft:unbreaking",
+    "#enchantingrework:catalyst/endurance"
   ]
 }

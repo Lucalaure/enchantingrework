@@ -4,6 +4,7 @@
   "enchantments": [
     "minecraft:sharpness",
     "minecraft:power",
-    "minecraft:piercing"
+    "minecraft:piercing",
+    "#enchantingrework:catalyst/edge"
   ]
 }

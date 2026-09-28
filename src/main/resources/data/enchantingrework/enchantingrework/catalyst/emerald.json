@@ -4,6 +4,7 @@
   "enchantments": [
     "minecraft:fortune",
     "minecraft:looting",
-    "minecraft:luck_of_the_sea"
+    "minecraft:luck_of_the_sea",
+    "#enchantingrework:catalyst/fortune"
   ]
 }

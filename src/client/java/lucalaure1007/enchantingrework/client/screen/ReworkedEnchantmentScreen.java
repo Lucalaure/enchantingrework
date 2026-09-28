@@ -219,7 +219,7 @@ public class ReworkedEnchantmentScreen extends AbstractContainerScreen<ReworkedE
 			lines.add(Enchantment.getFullname(main.get(), this.menu.getEnchantLevel(row)).copy().withStyle(ChatFormatting.WHITE));
 			Catalyst catalyst = Catalyst.find(this.minecraft.level.registryAccess(), this.menu.getCatalyst());
 			if (catalyst != null) {
-				lines.add(Component.translatable("enchantingrework.tooltip.theme", Component.translatable(catalyst.translationKey())).withStyle(ChatFormatting.DARK_PURPLE));
+				lines.add(Component.translatable("enchantingrework.tooltip.theme", catalyst.displayName()).withStyle(ChatFormatting.DARK_PURPLE));
 			}
 
 			int extras = this.menu.getMaxExtras(row);
@@ -243,11 +243,16 @@ public class ReworkedEnchantmentScreen extends AbstractContainerScreen<ReworkedE
 		}
 
 		lines.add(CommonComponents.EMPTY);
+		TableStatus status = this.menu.getRowStatus(row);
 		if (mode == TableMode.CATALYST) {
 			lines.add(this.tierRequirement(tier));
+			int catalysts = this.menu.getCatalystCost(row);
+			if (catalysts > 0 && !this.minecraft.player.hasInfiniteMaterials()) {
+				lines.add(Component.translatable("enchantingrework.tooltip.catalyst_cost", catalysts, this.menu.getCatalyst().getHoverName())
+					.withStyle(status == TableStatus.NEED_CATALYST ? ChatFormatting.RED : ChatFormatting.GRAY));
+			}
 		}
 
-		TableStatus status = this.menu.getRowStatus(row);
 		if (status != TableStatus.READY) {
 			lines.add(Component.translatable(status.translationKey()).withStyle(ChatFormatting.RED));
 			return lines;
@@ -304,8 +309,20 @@ public class ReworkedEnchantmentScreen extends AbstractContainerScreen<ReworkedE
 
 	private void addResonanceLine(final List<Component> lines) {
 		int books = this.menu.getResonantBooks();
-		if (books > 0) {
-			lines.add(Component.translatable("enchantingrework.tooltip.resonance", books).withStyle(ChatFormatting.AQUA));
+		if (books <= 0) {
+			return;
+		}
+
+		lines.add(Component.translatable("enchantingrework.tooltip.resonance", books).withStyle(ChatFormatting.AQUA));
+		int shown = 0;
+		for (EnchantingLogic.ResonanceEntry entry : this.menu.getTopResonance()) {
+			lines.add(Component.translatable("enchantingrework.tooltip.resonance.entry", entry.enchantment().value().description(), entry.books())
+				.withStyle(ChatFormatting.DARK_AQUA));
+			shown += entry.books();
+		}
+
+		if (shown < books) {
+			lines.add(Component.translatable("enchantingrework.tooltip.resonance.more", books - shown).withStyle(ChatFormatting.DARK_AQUA));
 		}
 	}
 

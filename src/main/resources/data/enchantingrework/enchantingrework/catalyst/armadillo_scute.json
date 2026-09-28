@@ -2,6 +2,7 @@
   "item": "minecraft:armadillo_scute",
   "theme": "deflect",
   "enchantments": [
-    "minecraft:projectile_protection"
+    "minecraft:projectile_protection",
+    "#enchantingrework:catalyst/deflect"
   ]
 }

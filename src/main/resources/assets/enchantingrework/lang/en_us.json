@@ -40,5 +40,9 @@
   "enchantingrework.header.tier": "Tier %s",
   "enchantingrework.header.no_tier": "No tier",
   "enchantingrework.status.no_offer": "Nothing to roll",
-  "enchantingrework.tooltip.resonance": "Resonating books: %s"
+  "enchantingrework.tooltip.resonance": "Resonating books: %s",
+  "enchantingrework.tooltip.catalyst_cost": "%s × %s",
+  "enchantingrework.status.need_catalyst": "Not enough catalysts",
+  "enchantingrework.tooltip.resonance.entry": "  %s ×%s",
+  "enchantingrework.tooltip.resonance.more": "  +%s other books"
 }

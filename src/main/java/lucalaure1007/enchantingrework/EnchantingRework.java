@@ -3,10 +3,13 @@ package lucalaure1007.enchantingrework;
 import com.mojang.serialization.Codec;
 import lucalaure1007.enchantingrework.catalyst.Catalyst;
 import lucalaure1007.enchantingrework.config.EnchantingConfig;
+import lucalaure1007.enchantingrework.network.ConfigSyncPayload;
 import lucalaure1007.enchantingrework.table.ReworkedEnchantmentMenu;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -45,6 +48,8 @@ public class EnchantingRework implements ModInitializer {
 	public void onInitialize() {
 		CONFIG = EnchantingConfig.load();
 		DynamicRegistries.registerSynced(Catalyst.REGISTRY_KEY, Catalyst.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(ConfigSyncPayload.TYPE, ConfigSyncPayload.CODEC);
+		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> sender.sendPacket(new ConfigSyncPayload(CONFIG.toJson())));
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> LOGGER.info(
 			"Loaded {} enchanting catalysts",
 			server.registryAccess().lookup(Catalyst.REGISTRY_KEY).map(registry -> registry.size()).orElse(0)

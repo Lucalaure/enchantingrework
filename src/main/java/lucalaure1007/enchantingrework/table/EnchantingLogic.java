@@ -63,14 +63,37 @@ public final class EnchantingLogic {
 		int levelRequirement,
 		int power,
 		@Nullable Holder<Enchantment> clue,
-		int clueLevel
+		int clueLevel,
+		int catalystCost
 	) {
 		static Option unavailable(int tier, TableStatus status) {
-			return new Option(tier, status, 0, 0, 0, 0, 0, 0, null, 0);
+			return new Option(tier, status, 0, 0, 0, 0, 0, 0, null, 0, 0);
 		}
 
 		public boolean ready() {
 			return this.status == TableStatus.READY;
+		}
+	}
+
+	/** One enchantment resonating around the table and how many books hold it. */
+	public record ResonanceEntry(Holder<Enchantment> enchantment, int books) {
+	}
+
+	/** Resonating books around the table: the total, and the enchantments with the most books. */
+	public record ResonanceSummary(int books, List<ResonanceEntry> top) {
+		public static final ResonanceSummary EMPTY = new ResonanceSummary(0, List.of());
+		public static final int SHOWN = 3;
+
+		static ResonanceSummary of(Object2IntMap<Holder<Enchantment>> resonance) {
+			List<ResonanceEntry> entries = new ArrayList<>();
+			for (Object2IntMap.Entry<Holder<Enchantment>> entry : resonance.object2IntEntrySet()) {
+				entries.add(new ResonanceEntry(entry.getKey(), entry.getIntValue()));
+			}
+
+			entries.sort(java.util.Comparator.comparingInt(ResonanceEntry::books).reversed()
+				.thenComparing(e -> e.enchantment().getRegisteredName()));
+			int total = entries.stream().mapToInt(ResonanceEntry::books).sum();
+			return new ResonanceSummary(total, List.copyOf(entries.subList(0, Math.min(SHOWN, entries.size()))));
 		}
 	}
 
@@ -84,7 +107,7 @@ public final class EnchantingLogic {
 		int bookshelves,
 		int passes,
 		List<Option> options,
-		int resonantBooks
+		ResonanceSummary resonance
 	) {
 		static Preview empty(TableStatus status, int playerTier, int bookshelves) {
 			List<Option> options = new ArrayList<>();
@@ -92,7 +115,7 @@ public final class EnchantingLogic {
 				options.add(Option.unavailable(t, status));
 			}
 
-			return new Preview(TableMode.NONE, status, null, null, playerTier, bookshelves, 0, options, 0);
+			return new Preview(TableMode.NONE, status, null, null, playerTier, bookshelves, 0, options, ResonanceSummary.EMPTY);
 		}
 
 		public Option option(int row) {
@@ -127,13 +150,13 @@ public final class EnchantingLogic {
 	}
 
 	public static int passesOf(ItemStack stack) {
-		Integer passes = stack.get(EnchantingRework.TABLE_PASSES);
-		if (passes != null) {
-			return passes;
+		// No enchantments (fresh, or cleaned at a grindstone) means no passes used, whatever the item remembers.
+		if (!stack.isEnchanted()) {
+			return 0;
 		}
 
-		// Enchanted elsewhere (loot, anvil, trades): counts as one pass.
-		return stack.isEnchanted() ? 1 : 0;
+		// Enchanted elsewhere (loot, anvil, trades) counts as one pass.
+		return Math.max(1, stack.getOrDefault(EnchantingRework.TABLE_PASSES, 1));
 	}
 
 	public static int passPenalty(int passes) {
@@ -160,10 +183,10 @@ public final class EnchantingLogic {
 		Catalyst catalyst = Catalyst.find(access, catalystStack);
 		List<Option> options = new ArrayList<>();
 		Object2IntMap<Holder<Enchantment>> resonance = resonance(level, pos);
-		int resonantBooks = resonance.values().intStream().sum();
+		ResonanceSummary summary = ResonanceSummary.of(resonance);
 
 		if (catalyst == null) {
-			return vanillaRolls(level, player, item, lapisCount, playerTier, bookshelves, passes, resonance, resonantBooks);
+			return vanillaRolls(level, player, item, lapisCount, playerTier, bookshelves, passes, resonance, summary);
 		}
 
 		Optional<Holder<Enchantment>> resolved = catalyst.resolveFor(access, item);
@@ -177,12 +200,14 @@ public final class EnchantingLogic {
 		Set<Holder<Enchantment>> others = new HashSet<>(existing.keySet());
 		others.remove(main);
 		boolean compatible = EnchantmentHelper.isEnchantmentCompatible(others, main);
+		int catalystCount = player.hasInfiniteMaterials() ? Integer.MAX_VALUE : catalystStack.getCount();
 		int anyExtras = 0;
 
 		for (int tier = 1; tier <= ROWS; tier++) {
 			int enchantLevel = maxMainLevel(tier, main);
 			int xpCost = config.xpPerEnchantmentLevel * enchantLevel + (enchanted ? passPenalty(passes) : 0);
 			int maxExtras = EnchantingConfig.at(config.tierMaxExtras, tier);
+			int catalystCost = Math.max(1, EnchantingConfig.at(config.tierCatalystCost, tier));
 			anyExtras = Math.max(anyExtras, maxExtras);
 
 			TableStatus status = TableStatus.READY;
@@ -198,9 +223,11 @@ public final class EnchantingLogic {
 				status = TableStatus.INCOMPATIBLE;
 			} else if (lapisCount < enchantLevel) {
 				status = TableStatus.NEED_LAPIS;
+			} else if (catalystCount < catalystCost) {
+				status = TableStatus.NEED_CATALYST;
 			}
 
-			options.add(new Option(tier, status, enchantLevel, xpCost, enchantLevel, maxExtras, 0, 0, null, 0));
+			options.add(new Option(tier, status, enchantLevel, xpCost, enchantLevel, maxExtras, 0, 0, null, 0, catalystCost));
 		}
 
 		Holder<Enchantment> hint = null;
@@ -209,7 +236,7 @@ public final class EnchantingLogic {
 			hint = mostLikelyExtra(extraPool(level, item, others, resonance));
 		}
 
-		return new Preview(TableMode.CATALYST, TableStatus.READY, main, hint, playerTier, bookshelves, passes, options, resonantBooks);
+		return new Preview(TableMode.CATALYST, TableStatus.READY, main, hint, playerTier, bookshelves, passes, options, summary);
 	}
 
 	/**
@@ -220,7 +247,7 @@ public final class EnchantingLogic {
 	 */
 	private static Preview vanillaRolls(
 		Level level, Player player, ItemStack item, int lapisCount, int playerTier, int bookshelves, int passes,
-		Object2IntMap<Holder<Enchantment>> resonance, int resonantBooks
+		Object2IntMap<Holder<Enchantment>> resonance, ResonanceSummary summary
 	) {
 		List<Option> options = new ArrayList<>();
 		if (item.isEnchanted()) {
@@ -228,7 +255,7 @@ public final class EnchantingLogic {
 				options.add(Option.unavailable(row, TableStatus.GAMBLE_FRESH_ONLY));
 			}
 
-			return new Preview(TableMode.GAMBLE, TableStatus.GAMBLE_FRESH_ONLY, null, null, playerTier, bookshelves, passes, options, resonantBooks);
+			return new Preview(TableMode.GAMBLE, TableStatus.GAMBLE_FRESH_ONLY, null, null, playerTier, bookshelves, passes, options, summary);
 		}
 
 		RandomSource random = RandomSource.create(rollSeed(player, resonance));
@@ -266,10 +293,10 @@ public final class EnchantingLogic {
 			}
 
 			int requirement = Math.max(power, EnchantingConfig.at(config.tierPlayerLevel, tier));
-			options.add(new Option(tier, status, 0, cost, cost, 0, requirement, power, clue.enchantment(), clue.level()));
+			options.add(new Option(tier, status, 0, cost, cost, 0, requirement, power, clue.enchantment(), clue.level(), 0));
 		}
 
-		return new Preview(TableMode.GAMBLE, TableStatus.READY, null, null, playerTier, bookshelves, passes, options, resonantBooks);
+		return new Preview(TableMode.GAMBLE, TableStatus.READY, null, null, playerTier, bookshelves, passes, options, summary);
 	}
 
 	private static RandomSource vanillaRowRandom(Player player, Object2IntMap<Holder<Enchantment>> resonance, int row) {

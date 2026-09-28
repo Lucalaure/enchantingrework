@@ -3,6 +3,7 @@
   "theme": "force",
   "enchantments": [
     "minecraft:knockback",
-    "minecraft:punch"
+    "minecraft:punch",
+    "#enchantingrework:catalyst/force"
   ]
 }

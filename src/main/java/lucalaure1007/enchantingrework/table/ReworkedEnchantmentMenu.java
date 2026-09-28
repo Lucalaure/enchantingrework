@@ -53,7 +53,9 @@ public class ReworkedEnchantmentMenu extends AbstractContainerMenu {
 	private static final int D_PASSES = 6;
 	private static final int D_SEED = 7;
 	private static final int D_RESONANCE = 8;
-	private static final int D_ROWS = 9;
+	/** Top resonating enchantments: id and book count, SHOWN pairs. */
+	private static final int D_RES_TOP = 9;
+	private static final int D_ROWS = D_RES_TOP + 2 * EnchantingLogic.ResonanceSummary.SHOWN;
 	private static final int R_STATUS = 0;
 	private static final int R_LEVEL = 1;
 	private static final int R_XP = 2;
@@ -62,7 +64,8 @@ public class ReworkedEnchantmentMenu extends AbstractContainerMenu {
 	private static final int R_REQUIREMENT = 5;
 	private static final int R_CLUE = 6;
 	private static final int R_CLUE_LEVEL = 7;
-	private static final int ROW_FIELDS = 8;
+	private static final int R_CATALYST = 8;
+	private static final int ROW_FIELDS = 9;
 	private static final int D_COUNT = D_ROWS + ROW_FIELDS * EnchantingLogic.ROWS;
 
 	private final Container enchantSlots = new SimpleContainer(3) {
@@ -116,6 +119,10 @@ public class ReworkedEnchantmentMenu extends AbstractContainerMenu {
 		for (int row = 0; row < EnchantingLogic.ROWS; row++) {
 			this.data.set(rowIndex(row, R_CLUE), -1);
 		}
+
+		for (int i = 0; i < EnchantingLogic.ResonanceSummary.SHOWN; i++) {
+			this.data.set(D_RES_TOP + 2 * i, -1);
+		}
 	}
 
 	@Override
@@ -152,7 +159,13 @@ public class ReworkedEnchantmentMenu extends AbstractContainerMenu {
 			this.data.set(D_SHELVES, preview.bookshelves());
 			this.data.set(D_PASSES, preview.passes());
 			this.data.set(D_SEED, EnchantingLogic.rollSeed(this.player, EnchantingLogic.resonance(level, pos)));
-			this.data.set(D_RESONANCE, preview.resonantBooks());
+			this.data.set(D_RESONANCE, preview.resonance().books());
+			List<EnchantingLogic.ResonanceEntry> top = preview.resonance().top();
+			for (int i = 0; i < EnchantingLogic.ResonanceSummary.SHOWN; i++) {
+				boolean present = i < top.size();
+				this.data.set(D_RES_TOP + 2 * i, present ? ids.getId(top.get(i).enchantment()) : -1);
+				this.data.set(D_RES_TOP + 2 * i + 1, present ? top.get(i).books() : 0);
+			}
 			for (int row = 0; row < EnchantingLogic.ROWS; row++) {
 				EnchantingLogic.Option option = preview.option(row);
 				this.data.set(rowIndex(row, R_STATUS), option.status().ordinal());
@@ -163,6 +176,7 @@ public class ReworkedEnchantmentMenu extends AbstractContainerMenu {
 				this.data.set(rowIndex(row, R_REQUIREMENT), option.levelRequirement());
 				this.data.set(rowIndex(row, R_CLUE), option.clue() == null ? -1 : ids.getId(option.clue()));
 				this.data.set(rowIndex(row, R_CLUE_LEVEL), option.clueLevel());
+				this.data.set(rowIndex(row, R_CATALYST), option.catalystCost());
 			}
 
 			super.broadcastChanges();
@@ -226,7 +240,7 @@ public class ReworkedEnchantmentMenu extends AbstractContainerMenu {
 			}
 
 			if (preview.mode() == TableMode.CATALYST) {
-				catalyst.consume(1, player);
+				catalyst.consume(option.catalystCost(), player);
 				if (catalyst.isEmpty()) {
 					this.enchantSlots.setItem(CATALYST_SLOT, ItemStack.EMPTY);
 				}
@@ -307,6 +321,22 @@ public class ReworkedEnchantmentMenu extends AbstractContainerMenu {
 	/** Enchanted books in chiseled bookshelves around the table that count for resonance. */
 	public int getResonantBooks() {
 		return this.data.get(D_RESONANCE);
+	}
+
+	public int getCatalystCost(final int row) {
+		return this.data.get(rowIndex(row, R_CATALYST));
+	}
+
+	/** Up to {@link EnchantingLogic.ResonanceSummary#SHOWN} enchantments with the most resonating books, most first. */
+	public List<EnchantingLogic.ResonanceEntry> getTopResonance() {
+		List<EnchantingLogic.ResonanceEntry> top = new java.util.ArrayList<>();
+		for (int i = 0; i < EnchantingLogic.ResonanceSummary.SHOWN; i++) {
+			int books = this.data.get(D_RES_TOP + 2 * i + 1);
+			this.enchantment(this.data.get(D_RES_TOP + 2 * i))
+				.ifPresent(enchantment -> top.add(new EnchantingLogic.ResonanceEntry(enchantment, books)));
+		}
+
+		return top;
 	}
 
 	public int getTier() {

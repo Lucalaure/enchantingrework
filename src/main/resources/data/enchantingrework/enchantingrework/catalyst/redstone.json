@@ -4,6 +4,7 @@
   "enchantments": [
     "minecraft:efficiency",
     "minecraft:quick_charge",
-    "minecraft:lure"
+    "minecraft:lure",
+    "#enchantingrework:catalyst/speed"
   ]
 }
