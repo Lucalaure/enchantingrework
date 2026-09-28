@@ -11,7 +11,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -152,7 +151,7 @@ public class ReworkedEnchantmentMenu extends AbstractContainerMenu {
 			this.data.set(D_TIER, preview.playerTier());
 			this.data.set(D_SHELVES, preview.bookshelves());
 			this.data.set(D_PASSES, preview.passes());
-			this.data.set(D_SEED, this.player.getEnchantmentSeed());
+			this.data.set(D_SEED, EnchantingLogic.rollSeed(this.player, EnchantingLogic.resonance(level, pos)));
 			this.data.set(D_RESONANCE, preview.resonantBooks());
 			for (int row = 0; row < EnchantingLogic.ROWS; row++) {
 				EnchantingLogic.Option option = preview.option(row);
@@ -205,8 +204,7 @@ public class ReworkedEnchantmentMenu extends AbstractContainerMenu {
 				return;
 			}
 
-			RandomSource random = RandomSource.create(player.getEnchantmentSeed() + buttonId);
-			List<EnchantmentInstance> enchantments = EnchantingLogic.roll(level, pos, player, item, preview, option, random);
+			List<EnchantmentInstance> enchantments = EnchantingLogic.roll(level, pos, player, item, preview, option);
 			if (enchantments.isEmpty()) {
 				return;
 			}

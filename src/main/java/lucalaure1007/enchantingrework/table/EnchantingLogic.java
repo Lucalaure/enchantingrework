@@ -231,7 +231,7 @@ public final class EnchantingLogic {
 			return new Preview(TableMode.GAMBLE, TableStatus.GAMBLE_FRESH_ONLY, null, null, playerTier, bookshelves, passes, options, resonantBooks);
 		}
 
-		RandomSource random = RandomSource.create(player.getEnchantmentSeed());
+		RandomSource random = RandomSource.create(rollSeed(player, resonance));
 		int[] powers = new int[ROWS];
 		for (int row = 0; row < ROWS; row++) {
 			powers[row] = EnchantmentHelper.getEnchantmentCost(random, row, bookshelves, item);
@@ -250,7 +250,7 @@ public final class EnchantingLogic {
 				continue;
 			}
 
-			RandomSource rowRandom = vanillaRowRandom(player, row);
+			RandomSource rowRandom = vanillaRowRandom(player, resonance, row);
 			List<EnchantmentInstance> list = vanillaList(level.registryAccess(), item, power, tier, rowRandom, resonance);
 			if (list.isEmpty()) {
 				options.add(Option.unavailable(tier, TableStatus.NO_OFFER));
@@ -272,8 +272,30 @@ public final class EnchantingLogic {
 		return new Preview(TableMode.GAMBLE, TableStatus.READY, null, null, playerTier, bookshelves, passes, options, resonantBooks);
 	}
 
-	private static RandomSource vanillaRowRandom(Player player, int row) {
-		return RandomSource.create(player.getEnchantmentSeed() + row);
+	private static RandomSource vanillaRowRandom(Player player, Object2IntMap<Holder<Enchantment>> resonance, int row) {
+		return RandomSource.create(rollSeed(player, resonance) + row);
+	}
+
+	/**
+	 * The seed every roll at this table uses: the player's enchantment seed (which changes after each enchant, as in
+	 * vanilla) mixed with the books resonating around the table. Changing the books gives a fresh roll; putting the
+	 * same books back gives the same roll again, so swapping one book in and out can't be used to reroll forever.
+	 * With no resonating books it is exactly vanilla's seed.
+	 */
+	public static int rollSeed(Player player, Object2IntMap<Holder<Enchantment>> resonance) {
+		return rollSeed(player.getEnchantmentSeed(), resonance);
+	}
+
+	public static int rollSeed(int enchantmentSeed, Object2IntMap<Holder<Enchantment>> resonance) {
+		int maxBooks = EnchantingRework.CONFIG.resonanceMaxBooksPerEnchantment;
+		int hash = 0;
+		for (Object2IntMap.Entry<Holder<Enchantment>> entry : resonance.object2IntEntrySet()) {
+			String id = entry.getKey().unwrapKey().map(key -> key.identifier().toString()).orElse("");
+			// Order-independent: sum of per-enchantment mixes, using the count that actually matters for the odds.
+			hash += it.unimi.dsi.fastutil.HashCommon.mix(id.hashCode() * 31 + Math.min(entry.getIntValue(), maxBooks));
+		}
+
+		return enchantmentSeed ^ hash;
 	}
 
 	private static List<EnchantmentInstance> vanillaList(
@@ -346,15 +368,19 @@ public final class EnchantingLogic {
 	}
 
 	/** The enchantments row {@code option} applies, rolled with {@code random}. Empty means nothing happens. */
-	public static List<EnchantmentInstance> roll(Level level, BlockPos pos, Player player, ItemStack item, Preview preview, Option option, RandomSource random) {
+	public static List<EnchantmentInstance> roll(Level level, BlockPos pos, Player player, ItemStack item, Preview preview, Option option) {
+		Object2IntMap<Holder<Enchantment>> resonance = resonance(level, pos);
+		RandomSource random = RandomSource.create(rollSeed(player, resonance) + option.tier() - 1);
 		return switch (preview.mode()) {
-			case GAMBLE -> vanillaList(level.registryAccess(), item, option.power(), option.tier(), vanillaRowRandom(player, option.tier() - 1), resonance(level, pos));
-			case CATALYST -> rollCatalyst(level, pos, item, preview.main(), option, random);
+			case GAMBLE -> vanillaList(level.registryAccess(), item, option.power(), option.tier(), vanillaRowRandom(player, resonance, option.tier() - 1), resonance);
+			case CATALYST -> rollCatalyst(level, item, preview.main(), option, random, resonance);
 			case NONE -> List.of();
 		};
 	}
 
-	private static List<EnchantmentInstance> rollCatalyst(Level level, BlockPos pos, ItemStack item, Holder<Enchantment> main, Option option, RandomSource random) {
+	private static List<EnchantmentInstance> rollCatalyst(
+		Level level, ItemStack item, Holder<Enchantment> main, Option option, RandomSource random, Object2IntMap<Holder<Enchantment>> resonance
+	) {
 		EnchantingConfig config = EnchantingRework.CONFIG;
 		List<EnchantmentInstance> result = new ArrayList<>();
 		result.add(new EnchantmentInstance(main, option.level()));
@@ -362,7 +388,6 @@ public final class EnchantingLogic {
 		Set<Holder<Enchantment>> taken = new HashSet<>(EnchantmentHelper.getEnchantmentsForCrafting(item).keySet());
 		taken.add(main);
 		int maxExtraLevel = Math.max(1, EnchantingConfig.at(config.tierMaxExtraLevel, option.tier()));
-		Object2IntMap<Holder<Enchantment>> resonance = resonance(level, pos);
 
 		for (int i = 0; i < option.maxExtras(); i++) {
 			if (random.nextFloat() >= config.extraChance) {
