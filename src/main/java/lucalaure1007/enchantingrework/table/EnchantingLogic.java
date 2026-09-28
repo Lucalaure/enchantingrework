@@ -228,7 +228,9 @@ public final class EnchantingLogic {
 				status = TableStatus.NEED_CATALYST;
 			}
 
-			options.add(new Option(tier, status, enchantLevel, xpCost, materialCost, maxExtras, 0, 0, null, 0, materialCost));
+			// Like vanilla, the row's big number is the level you need; the tier's level, or the cost if that's higher.
+			int requirement = Math.max(EnchantingConfig.at(config.tierPlayerLevel, tier), xpCost);
+			options.add(new Option(tier, status, enchantLevel, xpCost, materialCost, maxExtras, requirement, 0, null, 0, materialCost));
 		}
 
 		Holder<Enchantment> hint = null;

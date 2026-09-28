@@ -129,9 +129,8 @@ public class ReworkedEnchantmentScreen extends AbstractContainerScreen<ReworkedE
 			return;
 		}
 
-		// Vanilla rows show the level requirement; catalyst rows show what they actually cost.
-		int shownCost = mode == TableMode.GAMBLE ? this.menu.getLevelRequirement(row) : this.menu.getXpCost(row);
-		String costText = String.valueOf(shownCost);
+		// Every row shows the level you need, like vanilla; what it actually costs is in the tooltip.
+		String costText = String.valueOf(this.menu.getLevelRequirement(row));
 		int textWidth = 86 - this.font.width(costText);
 		boolean enabled = this.menu.canEnchant(this.minecraft.player, row);
 
@@ -259,6 +258,12 @@ public class ReworkedEnchantmentScreen extends AbstractContainerScreen<ReworkedE
 		}
 
 		if (!this.minecraft.player.hasInfiniteMaterials()) {
+			int requirement = this.menu.getLevelRequirement(row);
+			if (this.minecraft.player.experienceLevel < requirement) {
+				lines.add(Component.translatable("container.enchant.level.requirement", requirement).withStyle(ChatFormatting.RED));
+				return lines;
+			}
+
 			int lapis = this.menu.getLapisCost(row);
 			lines.add(Component.translatable(lapis == 1 ? "container.enchant.lapis.one" : "container.enchant.lapis.many", lapis).withStyle(ChatFormatting.GRAY));
 			int xp = this.menu.getXpCost(row);
