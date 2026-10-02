@@ -24,6 +24,9 @@
 		],
 		"fabric-datagen": [
 			"lucalaure1007.enchantingrework.client.EnchantingReworkDataGenerator"
+		],
+		"jei_mod_plugin": [
+			"lucalaure1007.enchantingrework.client.jei.EnchantingReworkJeiPlugin"
 		]
 	},
 	"mixins": [
@@ -34,5 +37,8 @@
 		"minecraft": "~26.3",
 		"java": ">=25",
 		"fabric-api": "*"
+	},
+	"suggests": {
+		"jei": "*"
 	}
 }

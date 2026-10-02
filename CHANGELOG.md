@@ -11,7 +11,9 @@ All notable changes to Enchanting Rework. Versions follow [Semantic Versioning](
 - One book of a theme is all you ever need; the material picks the theme, so multi-enchantment books work for any theme they fit.
 - Treasure books and curses can't be inscribed.
 - A guaranteed enchant uses up **one template**, plus lapis on the 1 / 2 / 3 / 5 / 8 curve and XP.
-- Templates are in the Ingredients creative tab; templates and enchanted books show their inscribing info in tooltips.
+- Templates are named for what they grant ("Edge Enchantment") with vanilla smithing-template style tooltips, and sit in
+  the Ingredients creative tab. Enchanted books list the templates they can make.
+- Optional [JEI](https://modrinth.com/mod/jei) support: an Inscribing recipe page per template, plus info pages.
 - Catalyst datapack entries gain an optional `inscription` field; new `catalystsPerEnchant` config option.
 
 ### Interface

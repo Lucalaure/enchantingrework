@@ -65,7 +65,10 @@ You never find templates: you **inscribe** them from an enchanted book at a craf
 - The material picks the theme, so a book with several enchantments can make a template for any theme it fits
   (a Sharpness + Unbreaking book makes Edge with quartz, Endurance with obsidian).
 - Treasure books (Mending, Frost Walker, Soul Speed, Swift Sneak, Wind Burst) and curses can't be inscribed.
-- Templates and enchanted books show the recipe and what they can make in their tooltips.
+- Templates are named for what they grant ("Edge Enchantment") and laid out like vanilla smithing templates.
+  Enchanted books list the templates they can make ("Can inscribe: Edge, Endurance").
+- With [JEI](https://modrinth.com/mod/jei) installed, each template has an **Inscribing** recipe page (the books
+  that work cycle in the middle slot) and an info page. JEI is optional.
 
 ### Datapacks
 

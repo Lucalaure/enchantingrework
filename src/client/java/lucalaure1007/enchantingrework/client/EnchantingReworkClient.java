@@ -21,6 +21,7 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
@@ -65,7 +66,7 @@ public class EnchantingReworkClient implements ClientModInitializer {
 	}
 
 	/**
-	 * Catalysts get their theme and enchantments under the name, and templates also show how to inscribe them.
+	 * Templates get a vanilla smithing-template style tooltip; other catalysts get their theme and enchantments.
 	 * Enchanted books list the templates they can be inscribed into.
 	 */
 	private static void addCatalystSubtitle(ItemStack stack, List<Component> lines) {
@@ -94,22 +95,23 @@ public class EnchantingReworkClient implements ClientModInitializer {
 			results.append(enchantment.value().description());
 		}
 
-		int at = 1;
-		// Templates already carry the theme in their name; other (datapack) catalysts say it here.
-		if (!EnchantingTemplates.BY_THEME.containsValue(stack.getItem())) {
-			lines.add(at++, Component.translatable("enchantingrework.tooltip.catalyst", catalyst.displayName())
-				.withStyle(ChatFormatting.DARK_PURPLE));
+		if (EnchantingTemplates.BY_THEME.containsValue(stack.getItem())) {
+			// Laid out like vanilla smithing templates: name, grey item type, then what it grants and needs.
+			int at = 1;
+			lines.add(at++, Component.translatable("enchantingrework.template").withStyle(ChatFormatting.GRAY));
+			lines.add(at++, CommonComponents.EMPTY);
+			lines.add(at++, Component.translatable("enchantingrework.template.grants").withStyle(ChatFormatting.GRAY));
+			lines.add(at++, CommonComponents.space().append(results).withStyle(ChatFormatting.BLUE));
+			lines.add(at++, Component.translatable("item.minecraft.smithing_template.ingredients").withStyle(ChatFormatting.GRAY));
+			lines.add(at, CommonComponents.space().append(Items.LAPIS_LAZULI.getName(Items.LAPIS_LAZULI.getDefaultInstance())).withStyle(ChatFormatting.BLUE));
+			return;
 		}
 
+		// Other (datapack) catalysts: theme and enchantments under the name.
+		lines.add(1, Component.translatable("enchantingrework.tooltip.catalyst", catalyst.displayName()).withStyle(ChatFormatting.DARK_PURPLE));
 		if (!results.getSiblings().isEmpty()) {
-			lines.add(at++, results.withStyle(ChatFormatting.GRAY));
+			lines.add(2, results.withStyle(ChatFormatting.GRAY));
 		}
-
-		catalyst.inscription().ifPresent(inscription -> {
-			lines.add(Component.translatable("enchantingrework.tooltip.inscribe",
-				new ItemStack(inscription.material()).getHoverName(), new ItemStack(inscription.filler()).getHoverName(), new ItemStack(inscription.core()).getHoverName()).withStyle(ChatFormatting.DARK_GRAY));
-			lines.add(Component.translatable("enchantingrework.tooltip.inscribe.book").withStyle(ChatFormatting.DARK_GRAY));
-		});
 	}
 
 	private static void addInscribableThemes(ItemStack book, List<Component> lines, RegistryAccess access) {
