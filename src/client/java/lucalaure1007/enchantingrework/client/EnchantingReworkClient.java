@@ -54,15 +54,7 @@ public class EnchantingReworkClient implements ClientModInitializer {
 			}
 		});
 
-		ItemTooltipCallback.EVENT.register((stack, context, flag, lines) -> {
-			addCatalystSubtitle(stack, lines);
-
-			Integer passes = stack.get(EnchantingRework.TABLE_PASSES);
-			if (passes != null && passes > 0 && stack.isEnchanted()) {
-				lines.add(Component.translatable("enchantingrework.tooltip.passes", passes, EnchantingRework.CONFIG.maxTablePasses)
-					.withStyle(ChatFormatting.DARK_GRAY));
-			}
-		});
+		ItemTooltipCallback.EVENT.register((stack, context, flag, lines) -> addCatalystSubtitle(stack, lines));
 	}
 
 	/**

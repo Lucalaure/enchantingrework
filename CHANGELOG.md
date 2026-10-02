@@ -16,6 +16,15 @@ All notable changes to Enchanting Rework. Versions follow [Semantic Versioning](
 - Optional [JEI](https://modrinth.com/mod/jei) support: an Inscribing recipe page per template, plus info pages.
 - Catalyst datapack entries gain an optional `inscription` field; new `catalystsPerEnchant` config option.
 
+### Table
+- **Re-enchanting is removed:** an item can only be enchanted at the table once ("Already enchanted").
+  The pass counter, its XP penalty and the related config options are gone.
+
+### Advancements
+- **By Design:** enchant an item using an Enchanting Template.
+- **Well Read:** enchant an item while enchanted books resonate from nearby chiseled bookshelves.
+- New `enchantingrework:table_enchant` advancement trigger for datapacks.
+
 ### Interface
 - Every table row's green number is now the level you need, consistent with vanilla.
 - Resonance tooltips show each enchantment's count against the 6-book cap.

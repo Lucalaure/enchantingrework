@@ -43,13 +43,6 @@ public class EnchantingConfig {
 	/** XP levels spent per level of the main enchantment. */
 	public int xpPerEnchantmentLevel = 2;
 
-	/** Re-enchanting is only possible from this tier (1-3). */
-	public int reenchantMinTier = 3;
-	/** An item can go through the table at most this many times. */
-	public int maxTablePasses = 3;
-	/** Extra XP per earlier pass, doubling like the anvil penalty: base * (2^passes - 1). */
-	public int passPenaltyBase = 4;
-
 	/** Horizontal radius around the table searched for chiseled bookshelves. */
 	public int resonanceRadius = 4;
 	/** Vertical range (below, above) around the table searched for chiseled bookshelves. */

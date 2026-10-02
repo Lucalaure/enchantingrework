@@ -105,7 +105,6 @@ public final class EnchantingLogic {
 		@Nullable Holder<Enchantment> hint,
 		int playerTier,
 		int bookshelves,
-		int passes,
 		List<Option> options,
 		ResonanceSummary resonance
 	) {
@@ -115,7 +114,7 @@ public final class EnchantingLogic {
 				options.add(Option.unavailable(t, status));
 			}
 
-			return new Preview(TableMode.NONE, status, null, null, playerTier, bookshelves, 0, options, ResonanceSummary.EMPTY);
+			return new Preview(TableMode.NONE, status, null, null, playerTier, bookshelves, options, ResonanceSummary.EMPTY);
 		}
 
 		public Option option(int row) {
@@ -149,20 +148,6 @@ public final class EnchantingLogic {
 		return tier;
 	}
 
-	public static int passesOf(ItemStack stack) {
-		// No enchantments (fresh, or cleaned at a grindstone) means no passes used, whatever the item remembers.
-		if (!stack.isEnchanted()) {
-			return 0;
-		}
-
-		// Enchanted elsewhere (loot, anvil, trades) counts as one pass.
-		return Math.max(1, stack.getOrDefault(EnchantingRework.TABLE_PASSES, 1));
-	}
-
-	public static int passPenalty(int passes) {
-		return EnchantingRework.CONFIG.passPenaltyBase * ((1 << Math.min(passes, 16)) - 1);
-	}
-
 	public static Preview compute(Level level, BlockPos pos, Player player, ItemStack item, ItemStack lapis, ItemStack catalystStack) {
 		EnchantingConfig config = EnchantingRework.CONFIG;
 		RegistryAccess access = level.registryAccess();
@@ -178,15 +163,18 @@ public final class EnchantingLogic {
 			return Preview.empty(TableStatus.NOT_ENCHANTABLE, playerTier, bookshelves);
 		}
 
-		boolean enchanted = item.isEnchanted();
-		int passes = passesOf(item);
+		// Each item goes through the table once.
+		if (item.isEnchanted()) {
+			return Preview.empty(TableStatus.ALREADY_ENCHANTED, playerTier, bookshelves);
+		}
+
 		Catalyst catalyst = Catalyst.find(access, catalystStack);
 		List<Option> options = new ArrayList<>();
 		Object2IntMap<Holder<Enchantment>> resonance = resonance(level, pos);
 		ResonanceSummary summary = ResonanceSummary.of(resonance);
 
 		if (catalyst == null) {
-			return vanillaRolls(level, player, item, lapisCount, playerTier, bookshelves, passes, resonance, summary);
+			return vanillaRolls(level, player, item, lapisCount, playerTier, bookshelves, resonance, summary);
 		}
 
 		Optional<Holder<Enchantment>> resolved = catalyst.resolveFor(access, item);
@@ -196,16 +184,12 @@ public final class EnchantingLogic {
 
 		// Catalyst: every row guarantees the catalyst's enchantment; higher tiers give a higher level and more extras.
 		Holder<Enchantment> main = resolved.get();
-		ItemEnchantments existing = EnchantmentHelper.getEnchantmentsForCrafting(item);
-		Set<Holder<Enchantment>> others = new HashSet<>(existing.keySet());
-		others.remove(main);
-		boolean compatible = EnchantmentHelper.isEnchantmentCompatible(others, main);
 		int catalystCount = player.hasInfiniteMaterials() ? Integer.MAX_VALUE : catalystStack.getCount();
 		int anyExtras = 0;
 
 		for (int tier = 1; tier <= ROWS; tier++) {
 			int enchantLevel = maxMainLevel(tier, main);
-			int xpCost = config.xpPerEnchantmentLevel * enchantLevel + (enchanted ? passPenalty(passes) : 0);
+			int xpCost = config.xpPerEnchantmentLevel * enchantLevel;
 			int maxExtras = EnchantingConfig.at(config.tierMaxExtras, tier);
 			// Lapis climbs with the enchantment's level; each guaranteed enchant uses up one template.
 			int lapisCost = config.materialCost(enchantLevel);
@@ -215,14 +199,6 @@ public final class EnchantingLogic {
 			TableStatus status = TableStatus.READY;
 			if (tier > playerTier) {
 				status = TableStatus.TIER_LOCKED;
-			} else if (enchanted && tier < config.reenchantMinTier) {
-				status = TableStatus.REENCHANT_TIER;
-			} else if (enchanted && passes >= config.maxTablePasses) {
-				status = TableStatus.MAX_PASSES;
-			} else if (existing.getLevel(main) >= enchantLevel) {
-				status = TableStatus.ALREADY_STRONGER;
-			} else if (!compatible) {
-				status = TableStatus.INCOMPATIBLE;
 			} else if (lapisCount < lapisCost) {
 				status = TableStatus.NEED_LAPIS;
 			} else if (catalystCount < catalystCost) {
@@ -236,11 +212,10 @@ public final class EnchantingLogic {
 
 		Holder<Enchantment> hint = null;
 		if (anyExtras > 0) {
-			others.add(main);
-			hint = mostLikelyExtra(extraPool(level, item, others, resonance));
+			hint = mostLikelyExtra(extraPool(level, item, new HashSet<>(Set.of(main)), resonance));
 		}
 
-		return new Preview(TableMode.CATALYST, TableStatus.READY, main, hint, playerTier, bookshelves, passes, options, summary);
+		return new Preview(TableMode.CATALYST, TableStatus.READY, main, hint, playerTier, bookshelves, options, summary);
 	}
 
 	/**
@@ -250,17 +225,10 @@ public final class EnchantingLogic {
 	 * by the player's enchantment seed so the hints are honest.
 	 */
 	private static Preview vanillaRolls(
-		Level level, Player player, ItemStack item, int lapisCount, int playerTier, int bookshelves, int passes,
+		Level level, Player player, ItemStack item, int lapisCount, int playerTier, int bookshelves,
 		Object2IntMap<Holder<Enchantment>> resonance, ResonanceSummary summary
 	) {
 		List<Option> options = new ArrayList<>();
-		if (item.isEnchanted()) {
-			for (int row = 1; row <= ROWS; row++) {
-				options.add(Option.unavailable(row, TableStatus.GAMBLE_FRESH_ONLY));
-			}
-
-			return new Preview(TableMode.GAMBLE, TableStatus.GAMBLE_FRESH_ONLY, null, null, playerTier, bookshelves, passes, options, summary);
-		}
 
 		RandomSource random = RandomSource.create(rollSeed(player, resonance));
 		int[] powers = new int[ROWS];
@@ -300,7 +268,7 @@ public final class EnchantingLogic {
 			options.add(new Option(tier, status, 0, cost, cost, 0, requirement, power, clue.enchantment(), clue.level(), 0));
 		}
 
-		return new Preview(TableMode.GAMBLE, TableStatus.READY, null, null, playerTier, bookshelves, passes, options, summary);
+		return new Preview(TableMode.GAMBLE, TableStatus.READY, null, null, playerTier, bookshelves, options, summary);
 	}
 
 	private static RandomSource vanillaRowRandom(Player player, Object2IntMap<Holder<Enchantment>> resonance, int row) {

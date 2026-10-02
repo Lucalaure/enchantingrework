@@ -1,0 +1,29 @@
+{
+  "parent": "minecraft:story/enchant_item",
+  "criteria": {
+    "well_read": {
+      "trigger": "enchantingrework:table_enchant",
+      "conditions": {
+        "resonant_books": {
+          "min": 1
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:chiseled_bookshelf"
+    },
+    "title": {
+      "translate": "advancements.enchantingrework.well_read.title"
+    },
+    "description": {
+      "translate": "advancements.enchantingrework.well_read.description"
+    }
+  },
+  "requirements": [
+    [
+      "well_read"
+    ]
+  ]
+}

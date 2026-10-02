@@ -120,12 +120,8 @@ public class ReworkedEnchantmentScreen extends AbstractContainerScreen<ReworkedE
 		}
 
 		TableStatus rowStatus = this.menu.getRowStatus(row);
-		if (mode == TableMode.GAMBLE && (rowStatus == TableStatus.NO_OFFER || rowStatus == TableStatus.GAMBLE_FRESH_ONLY)) {
+		if (mode == TableMode.GAMBLE && rowStatus == TableStatus.NO_OFFER) {
 			graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ROW_DISABLED_SPRITE, x, y, ROW_W, ROW_H);
-			if (row == 0 && rowStatus == TableStatus.GAMBLE_FRESH_ONLY) {
-				graphics.textWithWordWrap(this.font, Component.translatable(rowStatus.translationKey()), x + 4, y + 2, ROW_W - 8, PROBLEM_COLOR, false);
-			}
-
 			return;
 		}
 
@@ -231,10 +227,6 @@ public class ReworkedEnchantmentScreen extends AbstractContainerScreen<ReworkedE
 				lines.add(Component.translatable("enchantingrework.tooltip.no_extras").withStyle(ChatFormatting.GRAY));
 			}
 
-			if (this.menu.getPasses() > 0) {
-				lines.add(Component.translatable("enchantingrework.tooltip.pass", this.menu.getPasses() + 1, EnchantingRework.CONFIG.maxTablePasses)
-					.withStyle(ChatFormatting.GRAY));
-			}
 		} else if (mode == TableMode.GAMBLE) {
 			return this.vanillaTooltip(row);
 		} else {

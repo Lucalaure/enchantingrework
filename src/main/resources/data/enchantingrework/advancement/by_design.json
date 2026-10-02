@@ -1,0 +1,27 @@
+{
+  "parent": "minecraft:story/enchant_item",
+  "criteria": {
+    "by_design": {
+      "trigger": "enchantingrework:table_enchant",
+      "conditions": {
+        "catalyst": true
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "enchantingrework:edge_enchanting_template"
+    },
+    "title": {
+      "translate": "advancements.enchantingrework.by_design.title"
+    },
+    "description": {
+      "translate": "advancements.enchantingrework.by_design.description"
+    }
+  },
+  "requirements": [
+    [
+      "by_design"
+    ]
+  ]
+}

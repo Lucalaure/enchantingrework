@@ -50,11 +50,10 @@ public class ReworkedEnchantmentMenu extends AbstractContainerMenu {
 	private static final int D_HINT = 3;
 	private static final int D_TIER = 4;
 	private static final int D_SHELVES = 5;
-	private static final int D_PASSES = 6;
-	private static final int D_SEED = 7;
-	private static final int D_RESONANCE = 8;
+	private static final int D_SEED = 6;
+	private static final int D_RESONANCE = 7;
 	/** Top resonating enchantments: id and book count, SHOWN pairs. */
-	private static final int D_RES_TOP = 9;
+	private static final int D_RES_TOP = 8;
 	private static final int D_ROWS = D_RES_TOP + 2 * EnchantingLogic.ResonanceSummary.SHOWN;
 	private static final int R_STATUS = 0;
 	private static final int R_LEVEL = 1;
@@ -157,7 +156,6 @@ public class ReworkedEnchantmentMenu extends AbstractContainerMenu {
 			this.data.set(D_HINT, preview.hint() == null ? -1 : ids.getId(preview.hint()));
 			this.data.set(D_TIER, preview.playerTier());
 			this.data.set(D_SHELVES, preview.bookshelves());
-			this.data.set(D_PASSES, preview.passes());
 			this.data.set(D_SEED, EnchantingLogic.rollSeed(this.player, EnchantingLogic.resonance(level, pos)));
 			this.data.set(D_RESONANCE, preview.resonance().books());
 			List<EnchantingLogic.ResonanceEntry> top = preview.resonance().top();
@@ -229,10 +227,6 @@ public class ReworkedEnchantmentMenu extends AbstractContainerMenu {
 				result.enchant(enchantment.enchantment(), enchantment.level());
 			}
 
-			if (!result.is(Items.ENCHANTED_BOOK)) {
-				result.set(EnchantingRework.TABLE_PASSES, preview.passes() + 1);
-			}
-
 			this.enchantSlots.setItem(ITEM_SLOT, result);
 			lapis.consume(option.lapisCost(), player);
 			if (lapis.isEmpty()) {
@@ -249,6 +243,7 @@ public class ReworkedEnchantmentMenu extends AbstractContainerMenu {
 			player.awardStat(Stats.ENCHANT_ITEM);
 			if (player instanceof ServerPlayer serverPlayer) {
 				CriteriaTriggers.ENCHANTED_ITEM.trigger(serverPlayer, result, option.xpCost());
+				EnchantingRework.TABLE_ENCHANT.trigger(serverPlayer, preview.mode() == TableMode.CATALYST, preview.resonance().books());
 			}
 
 			this.enchantSlots.setChanged();
@@ -345,10 +340,6 @@ public class ReworkedEnchantmentMenu extends AbstractContainerMenu {
 
 	public int getBookshelves() {
 		return this.data.get(D_SHELVES);
-	}
-
-	public int getPasses() {
-		return this.data.get(D_PASSES);
 	}
 
 	public ItemStack getCatalyst() {

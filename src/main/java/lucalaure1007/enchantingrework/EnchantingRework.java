@@ -1,6 +1,6 @@
 package lucalaure1007.enchantingrework;
 
-import com.mojang.serialization.Codec;
+import lucalaure1007.enchantingrework.advancement.TableEnchantTrigger;
 import lucalaure1007.enchantingrework.catalyst.Catalyst;
 import lucalaure1007.enchantingrework.config.EnchantingConfig;
 import lucalaure1007.enchantingrework.network.ConfigSyncPayload;
@@ -17,9 +17,7 @@ import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.Registry;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
@@ -37,11 +35,9 @@ public class EnchantingRework implements ModInitializer {
 
 	public static EnchantingConfig CONFIG = new EnchantingConfig();
 
-	/** How many times an item has been through the enchanting table. */
-	public static final DataComponentType<Integer> TABLE_PASSES = Registry.register(
-		BuiltInRegistries.DATA_COMPONENT_TYPE,
-		id("table_passes"),
-		DataComponentType.<Integer>builder().persistent(Codec.intRange(0, 255)).networkSynchronized(ByteBufCodecs.VAR_INT).build()
+	/** Fires on every table enchant; used by the mod's advancements. */
+	public static final TableEnchantTrigger TABLE_ENCHANT = Registry.register(
+		BuiltInRegistries.TRIGGER_TYPES, id("table_enchant"), new TableEnchantTrigger()
 	);
 
 	public static final MenuType<ReworkedEnchantmentMenu> ENCHANTMENT_MENU = Registry.register(

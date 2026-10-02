@@ -4,8 +4,6 @@
   "enchantingrework.tooltip.theme": "%s catalyst",
   "enchantingrework.tooltip.extras": "Up to %s random extras",
   "enchantingrework.tooltip.hint": "Most likely extra: %s",
-  "enchantingrework.tooltip.pass": "Table pass %s of %s",
-  "enchantingrework.tooltip.passes": "Enchanting table passes: %s/%s",
   "enchantingrework.tooltip.gamble.desc": "Add a catalyst to guarantee an enchantment",
   "enchantingrework.status.ready": "Ready",
   "enchantingrework.status.no_item": "Place an item",
@@ -13,11 +11,6 @@
   "enchantingrework.status.tier_locked": "Tier locked",
   "enchantingrework.status.no_match": "Catalyst doesn't fit",
   "enchantingrework.status.need_lapis": "Not enough lapis",
-  "enchantingrework.status.reenchant_tier": "Re-enchant: tier III",
-  "enchantingrework.status.max_passes": "No passes left",
-  "enchantingrework.status.already_stronger": "Already that strong",
-  "enchantingrework.status.incompatible": "Conflicts with item",
-  "enchantingrework.status.gamble_fresh_only": "Needs a catalyst",
   "enchantingrework.theme.edge": "Edge",
   "enchantingrework.theme.speed": "Speed",
   "enchantingrework.theme.endurance": "Endurance",
@@ -66,5 +59,10 @@
   "enchantingrework.template.grants": "Grants:",
   "enchantingrework.jei.inscribing": "Inscribing",
   "enchantingrework.jei.book_kept": "The book is given back",
-  "enchantingrework.jei.template_info": "Place in the enchanting table's third slot to guarantee one of: %s. Each enchant uses up one template. Inscribe more at a crafting table: the enchanted book is given back."
+  "enchantingrework.jei.template_info": "Place in the enchanting table's third slot to guarantee one of: %s. Each enchant uses up one template. Inscribe more at a crafting table: the enchanted book is given back.",
+  "enchantingrework.status.already_enchanted": "Already enchanted",
+  "advancements.enchantingrework.by_design.title": "By Design",
+  "advancements.enchantingrework.by_design.description": "Enchant an item using an Enchanting Template",
+  "advancements.enchantingrework.well_read.title": "Well Read",
+  "advancements.enchantingrework.well_read.description": "Enchant an item while enchanted books resonate from nearby Chiseled Bookshelves"
 }

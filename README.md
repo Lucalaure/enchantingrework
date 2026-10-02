@@ -28,8 +28,12 @@ The enchanting table runs on four levers:
    both in no-catalyst rolls and as catalyst extras. Resonance only changes *which* enchantments appear; the tier still caps their level.
    The books aren't used up. The table shows the most likely extra as a hint.
 
-**Re-enchanting:** at tier III, an enchanted item can go back on the table to add or upgrade one main enchantment. Each pass costs more
-(anvil-style doubling penalty), and an item takes at most three passes. Items show their pass count in the tooltip.
+**One trip to the table:** an item can only be enchanted at the table once. Already enchanted items show
+"Already enchanted"; the anvil still works as in vanilla.
+
+**Advancements:** *By Design* (enchant an item using an Enchanting Template) and *Well Read* (enchant an item while
+enchanted books resonate from nearby chiseled bookshelves), both following vanilla's *Enchanter*. Datapacks can make
+their own with the `enchantingrework:table_enchant` trigger (`catalyst`: true/false, `resonant_books`: a range).
 
 **Kept out of the table:** treasure enchantments (Mending, Frost Walker, Soul Speed, Swift Sneak, Wind Burst, curses) never come from the table and never resonate.
 
@@ -102,7 +106,7 @@ templates. A brand-new catalyst's theme name shows as-is unless you add an `ench
 ## Config
 
 Every number lives in `config/enchantingrework.json` (created on first launch): tier requirements and caps, XP per level,
-extra chance, re-enchant penalty and pass limit, resonance radius and weight, and the no-catalyst gamble.
+extra chance, templates per enchant, lapis cost curve, resonance radius and weight, and chiseled bookshelf counting.
 
 ## Code map
 
