@@ -1,0 +1,15 @@
+{
+  "item": "enchantingrework:fire_enchanting_template",
+  "theme": "fire",
+  "enchantments": [
+    "minecraft:fire_aspect",
+    "minecraft:flame",
+    "minecraft:fire_protection",
+    "#enchantingrework:catalyst/fire"
+  ],
+  "inscription": {
+    "material": "minecraft:blaze_powder",
+    "core": "minecraft:diamond",
+    "filler": "minecraft:amethyst_shard"
+  }
+}

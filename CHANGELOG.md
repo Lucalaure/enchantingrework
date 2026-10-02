@@ -2,6 +2,23 @@
 
 All notable changes to Enchanting Rework. Versions follow [Semantic Versioning](https://semver.org).
 
+## [1.1.0] - 2026-10-02
+
+### Enchanting templates
+- Catalysts are now **enchanting templates**, one per theme (14), replacing plain items like quartz or obsidian.
+- **Inscribing:** enchanted book (given back) + 4 theme material + 3 amethyst shards + core → 1 template.
+  The core sets the rarity: paper (common), diamond (uncommon) or echo shard (rare: Fortune, Delicacy).
+- One book of a theme is all you ever need; the material picks the theme, so multi-enchantment books work for any theme they fit.
+- Treasure books and curses can't be inscribed.
+- A guaranteed enchant uses up **one template**, plus lapis on the 1 / 2 / 3 / 5 / 8 curve and XP.
+- Templates are in the Ingredients creative tab; templates and enchanted books show their inscribing info in tooltips.
+- Catalyst datapack entries gain an optional `inscription` field; new `catalystsPerEnchant` config option.
+
+### Interface
+- Every table row's green number is now the level you need, consistent with vanilla.
+- Resonance tooltips show each enchantment's count against the 6-book cap.
+- Enchanted books in chiseled bookshelves shimmer with the enchantment glint.
+
 ## [1.0.0] - 2026-09-28
 
 First release, for Minecraft 26.3 (Fabric).
@@ -24,7 +41,6 @@ First release, for Minecraft 26.3 (Fabric).
 - Catalyst items show their theme and possible enchantments in their tooltip.
 - Row tooltips show tier requirements, costs, likely extras and which enchantments are resonating.
 - The table's title bar shows your tier and bookshelf count.
-- Enchanted books in chiseled bookshelves shimmer with the enchantment glint.
 
 ### Configuration and data
 - Every number is in `config/enchantingrework.json`; servers send their config to players on join.

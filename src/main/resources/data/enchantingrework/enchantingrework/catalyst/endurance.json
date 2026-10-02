@@ -1,0 +1,13 @@
+{
+  "item": "enchantingrework:endurance_enchanting_template",
+  "theme": "endurance",
+  "enchantments": [
+    "minecraft:unbreaking",
+    "#enchantingrework:catalyst/endurance"
+  ],
+  "inscription": {
+    "material": "minecraft:obsidian",
+    "core": "minecraft:paper",
+    "filler": "minecraft:amethyst_shard"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "item": "enchantingrework:force_enchanting_template",
+  "theme": "force",
+  "enchantments": [
+    "minecraft:knockback",
+    "minecraft:punch",
+    "#enchantingrework:catalyst/force"
+  ],
+  "inscription": {
+    "material": "minecraft:slime_ball",
+    "core": "minecraft:paper",
+    "filler": "minecraft:amethyst_shard"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "item": "enchantingrework:deflect_enchanting_template",
+  "theme": "deflect",
+  "enchantments": [
+    "minecraft:projectile_protection",
+    "#enchantingrework:catalyst/deflect"
+  ],
+  "inscription": {
+    "material": "minecraft:armadillo_scute",
+    "core": "minecraft:paper",
+    "filler": "minecraft:amethyst_shard"
+  }
+}

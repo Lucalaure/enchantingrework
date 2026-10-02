@@ -1,0 +1,13 @@
+{
+  "item": "enchantingrework:blast_enchanting_template",
+  "theme": "blast",
+  "enchantments": [
+    "minecraft:blast_protection",
+    "#enchantingrework:catalyst/blast"
+  ],
+  "inscription": {
+    "material": "minecraft:gunpowder",
+    "core": "minecraft:paper",
+    "filler": "minecraft:amethyst_shard"
+  }
+}

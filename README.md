@@ -15,17 +15,15 @@ The enchanting table runs on four levers:
 
 1. **Three tier rows, like vanilla.** The table always shows three options, one per tier. Tier I needs level 5, tier II needs level 15
    and 8 shelves, tier III needs level 30 and 15 shelves. A row you haven't unlocked is greyed out, and its tooltip shows what it needs.
-2. **A catalyst guarantees the enchantment.** A third slot (where the book used to float) takes one catalyst. The item decides which
-   enchantment of the theme it gets, and **every row** gives that enchantment. You pick the row:
+2. **An enchanting template guarantees the enchantment.** A third slot (where the book used to float) takes one template.
+   The item decides which enchantment of the template's theme it gets, and **every row** gives that enchantment. You pick the row:
    tier I gives level II, tier II level III, tier III the enchantment's max, with 0 / 1 / 2 chances at a random extra.
-3. **Lapis, catalysts and XP pay for it.** A catalyst row uses the same number of lapis and catalysts, climbing with the
-   enchantment level: 1 / 2 / 3 / 5 / 8 for levels I–V (`materialCostByLevel`). It also costs 2 XP levels per enchantment
-   level (Sharpness V = 8 quartz + 8 lapis + 10 levels). **Without a catalyst, the rows are vanilla random rolls inside the tier system**: row N unlocks
-   with tier N and caps every enchantment it rolls at that tier's level, bookshelves set each row's power, rows cost 1 / 2 / 3 levels
-   and lapis, and hovering a row shows the vanilla clue ("Sharpness III . . . ?").
-
-**Bookshelves:** normal bookshelves count as in vanilla, and so do chiseled bookshelves holding at least 3 books (`chiseledShelfMinBooks`).
-The table's title bar always shows your tier and how many shelves it sees.
+3. **Templates, lapis and XP pay for it.** A guaranteed enchant uses up one template, plus lapis that climbs with the
+   enchantment level (1 / 2 / 3 / 5 / 8 for levels I–V, `materialCostByLevel`) and 2 XP levels per enchantment level
+   (Sharpness V = 1 Edge template + 8 lapis + 10 levels). Every row's green number is the level you need.
+   **Without a template, the rows are vanilla random rolls inside the tier system**: row N unlocks with tier N and caps every
+   enchantment it rolls at that tier's level, bookshelves set each row's power, rows cost 1 / 2 / 3 levels and lapis, and
+   hovering a row shows the vanilla clue ("Sharpness III . . . ?").
 4. **Bookshelf resonance steers the odds.** Enchanted books in chiseled bookshelves near the table raise the odds of their enchantments showing up,
    both in no-catalyst rolls and as catalyst extras. Resonance only changes *which* enchantments appear; the tier still caps their level.
    The books aren't used up. The table shows the most likely extra as a hint.
@@ -35,41 +33,59 @@ The table's title bar always shows your tier and how many shelves it sees.
 
 **Kept out of the table:** treasure enchantments (Mending, Frost Walker, Soul Speed, Swift Sneak, Wind Burst, curses) never come from the table and never resonate.
 
-## Catalysts
+## Enchanting templates
 
-| Catalyst | Theme | Result |
-| --- | --- | --- |
-| Quartz | Edge | Sharpness · Power · Piercing |
-| Redstone | Speed | Efficiency · Quick Charge · Lure |
-| Obsidian | Endurance | Unbreaking |
-| Emerald | Fortune | Fortune · Looting · Luck of the Sea |
-| Cobweb | Delicacy | Silk Touch |
-| Blaze powder | Fire | Fire Aspect · Flame · Fire Protection |
-| Glistering melon | Holy | Smite |
-| Fermented spider eye | Venom | Bane of Arthropods |
-| Slime ball | Force | Knockback · Punch |
-| Iron ingot | Guard | Protection |
-| Gunpowder | Blast | Blast Protection |
-| Armadillo scute | Deflect | Projectile Protection |
-| Feather | Air | Feather Falling |
-| Prismarine crystals | Water | Respiration · Depth Strider · Impaling |
+You never find templates: you **inscribe** them from an enchanted book at a crafting table. The book goes in the middle and
+**comes back**, so one book of a theme lets you make that theme's templates forever. Each craft makes one template.
 
-Catalysts are datapack entries, so packs can add or change them:
-`data/<namespace>/enchantingrework/catalyst/<name>.json`
+```
+ M  A  M        M = theme material  (×4)
+ A  B  A        A = amethyst shard  (×3)
+ M  C  M        B = enchanted book  (kept)
+                C = core            (×1)
+```
+
+| Template | Book (any level) | Material | Core | Gives |
+| --- | --- | --- | --- | --- |
+| Endurance | Unbreaking | Obsidian | Paper | Unbreaking |
+| Speed | Efficiency, Quick Charge, Lure | Redstone | Paper | Efficiency · Quick Charge · Lure |
+| Air | Feather Falling | Feather | Paper | Feather Falling |
+| Force | Knockback, Punch | Slime ball | Paper | Knockback · Punch |
+| Blast | Blast Protection | Gunpowder | Paper | Blast Protection |
+| Deflect | Projectile Protection | Armadillo scute | Paper | Projectile Protection |
+| Edge | Sharpness, Power, Piercing | Quartz | Diamond | Sharpness · Power · Piercing |
+| Guard | Protection | Iron ingot | Diamond | Protection |
+| Fire | Fire Aspect, Flame, Fire Protection | Blaze powder | Diamond | Fire Aspect · Flame · Fire Protection |
+| Water | Respiration, Depth Strider, Impaling | Prismarine crystals | Diamond | Respiration · Depth Strider · Impaling |
+| Holy | Smite | Glistering melon slice | Diamond | Smite |
+| Venom | Bane of Arthropods | Fermented spider eye | Diamond | Bane of Arthropods |
+| Fortune | Fortune, Looting, Luck of the Sea | Emerald | Echo shard | Fortune · Looting · Luck of the Sea |
+| Delicacy | Silk Touch | Cobweb | Echo shard | Silk Touch |
+
+- The material picks the theme, so a book with several enchantments can make a template for any theme it fits
+  (a Sharpness + Unbreaking book makes Edge with quartz, Endurance with obsidian).
+- Treasure books (Mending, Frost Walker, Soul Speed, Swift Sneak, Wind Burst) and curses can't be inscribed.
+- Templates and enchanted books show the recipe and what they can make in their tooltips.
+
+### Datapacks
+
+Templates are catalysts, defined as datapack entries in `data/<namespace>/enchantingrework/catalyst/<name>.json`:
 
 ```json
 {
-  "item": "minecraft:quartz",
+  "item": "enchantingrework:edge_enchanting_template",
   "theme": "edge",
-  "enchantments": ["minecraft:sharpness", "minecraft:power", "minecraft:piercing"]
+  "enchantments": ["minecraft:sharpness", "minecraft:power", "minecraft:piercing", "#enchantingrework:catalyst/edge"],
+  "inscription": { "material": "minecraft:quartz", "core": "minecraft:diamond", "filler": "minecraft:amethyst_shard" }
 }
 ```
 
 The first enchantment in the list that supports the item wins; books take the first entry. Entries can be enchantment
-tags (`"#mymod:blades"`); a tag expands to its members in order.
+tags (`"#mymod:blades"`); a tag expands to its members in order. `inscription` is optional; leave it out and the catalyst
+item isn't craftable (any item can be a catalyst).
 
-**Adding enchantments from other mods:** every built-in catalyst ends with an empty tag named after its theme, for example
-`#enchantingrework:catalyst/edge`. To add your enchantment to the Edge theme, add it to that tag in a datapack or mod:
+**Adding enchantments from other mods:** every built-in theme ends with an empty tag named after it, for example
+`#enchantingrework:catalyst/edge`. Add your enchantment to it in a datapack or mod:
 
 `data/enchantingrework/tags/enchantment/catalyst/edge.json`:
 
@@ -77,8 +93,8 @@ tags (`"#mymod:blades"`); a tag expands to its members in order.
 { "values": ["mymod:serration"] }
 ```
 
-It becomes a fallback for items none of the vanilla Edge enchantments fit. To make a brand-new catalyst, add a new catalyst file;
-its theme name shows as-is unless you add an `enchantingrework.theme.<theme>` translation.
+It becomes a fallback for items none of the vanilla Edge enchantments fit, and books holding it can be inscribed into Edge
+templates. A brand-new catalyst's theme name shows as-is unless you add an `enchantingrework.theme.<theme>` translation.
 
 ## Config
 
@@ -91,6 +107,7 @@ extra chance, re-enchant penalty and pass limit, resonance radius and weight, an
 - `table/ReworkedEnchantmentMenu` – slots (item, lapis, catalyst), syncs the preview to the client, performs the enchant
 - `mixin/EnchantingTableBlockMixin` – makes the enchanting table open the reworked menu
 - `catalyst/Catalyst` – the synced `enchantingrework:catalyst` datapack registry
+- `template/EnchantingTemplates`, `template/InscribeTemplateRecipe` – the template items and the inscribing recipe
 - `client/screen/ReworkedEnchantmentScreen` – the table UI
 
 ## Releasing

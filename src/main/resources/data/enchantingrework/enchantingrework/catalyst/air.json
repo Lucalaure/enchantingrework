@@ -1,0 +1,13 @@
+{
+  "item": "enchantingrework:air_enchanting_template",
+  "theme": "air",
+  "enchantments": [
+    "minecraft:feather_falling",
+    "#enchantingrework:catalyst/air"
+  ],
+  "inscription": {
+    "material": "minecraft:feather",
+    "core": "minecraft:paper",
+    "filler": "minecraft:amethyst_shard"
+  }
+}

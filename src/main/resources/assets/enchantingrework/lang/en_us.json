@@ -1,6 +1,6 @@
 {
-  "enchantingrework.catalyst_slot": "Catalyst",
-  "enchantingrework.catalyst_slot.desc": "Chooses the main enchantment",
+  "enchantingrework.catalyst_slot": "Enchanting Template",
+  "enchantingrework.catalyst_slot.desc": "Guarantees an enchantment. Inscribe one from an enchanted book.",
   "enchantingrework.tooltip.theme": "%s catalyst",
   "enchantingrework.tooltip.extras": "Up to %s random extras",
   "enchantingrework.tooltip.hint": "Most likely extra: %s",
@@ -46,5 +46,22 @@
   "enchantingrework.tooltip.resonance.entry": "  %s %s/%s",
   "enchantingrework.tooltip.resonance.more": "  +%s other books",
   "enchantingrework.tooltip.resonance.entry.max": "  %s %s/%s · max",
-  "enchantingrework.tooltip.resonance.entry.over": "  %s %s/%s · max (+%s unused)"
+  "enchantingrework.tooltip.resonance.entry.over": "  %s %s/%s · max (+%s unused)",
+  "item.enchantingrework.endurance_enchanting_template": "Endurance Enchanting Template",
+  "item.enchantingrework.speed_enchanting_template": "Speed Enchanting Template",
+  "item.enchantingrework.air_enchanting_template": "Air Enchanting Template",
+  "item.enchantingrework.force_enchanting_template": "Force Enchanting Template",
+  "item.enchantingrework.blast_enchanting_template": "Blast Enchanting Template",
+  "item.enchantingrework.deflect_enchanting_template": "Deflect Enchanting Template",
+  "item.enchantingrework.edge_enchanting_template": "Edge Enchanting Template",
+  "item.enchantingrework.guard_enchanting_template": "Guard Enchanting Template",
+  "item.enchantingrework.fire_enchanting_template": "Fire Enchanting Template",
+  "item.enchantingrework.water_enchanting_template": "Water Enchanting Template",
+  "item.enchantingrework.holy_enchanting_template": "Holy Enchanting Template",
+  "item.enchantingrework.venom_enchanting_template": "Venom Enchanting Template",
+  "item.enchantingrework.fortune_enchanting_template": "Fortune Enchanting Template",
+  "item.enchantingrework.delicacy_enchanting_template": "Delicacy Enchanting Template",
+  "enchantingrework.tooltip.inscribe": "Inscribe: enchanted book + 4 %s + 3 %s + %s",
+  "enchantingrework.tooltip.inscribe.book": "Book kept · makes 1 template",
+  "enchantingrework.tooltip.can_inscribe": "Can inscribe: %s"
 }

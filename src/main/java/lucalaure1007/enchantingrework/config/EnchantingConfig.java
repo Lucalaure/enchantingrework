@@ -31,10 +31,12 @@ public class EnchantingConfig {
 	/** Highest level a random extra can roll at each tier. */
 	public int[] tierMaxExtraLevel = {1, 1, 2};
 	/**
-	 * Lapis AND catalysts a catalyst enchant uses up, by the level of the main enchantment (index 0 is level I).
+	 * Lapis a catalyst enchant uses up, by the level of the main enchantment (index 0 is level I).
 	 * Levels past the end of the list keep growing the same way (each adds the previous two).
 	 */
 	public int[] materialCostByLevel = {1, 2, 3, 5, 8};
+	/** Catalysts (enchanting templates) used up by one guaranteed enchant. */
+	public int catalystsPerEnchant = 1;
 	/** Chance that each available extra slot actually rolls an extra. */
 	public float extraChance = 0.5F;
 
@@ -64,7 +66,7 @@ public class EnchantingConfig {
 	 */
 	public int chiseledShelfMinBooks = 3;
 
-	/** Lapis and catalysts needed for a main enchantment of {@code level}. */
+	/** Lapis needed for a main enchantment of {@code level}. */
 	public int materialCost(int level) {
 		if (level <= 0) {
 			return 0;

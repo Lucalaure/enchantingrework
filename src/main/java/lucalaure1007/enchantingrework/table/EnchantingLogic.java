@@ -38,7 +38,7 @@ import java.util.Set;
  * <ol>
  *   <li>player level + bookshelves unlock the tiers, and each tier caps the enchantment level,</li>
  *   <li>a catalyst guarantees the main enchantment,</li>
- *   <li>lapis and catalysts pay for it, in equal amounts that climb with the enchantment level,</li>
+ *   <li>the catalyst (an enchanting template) is used up, and lapis climbs with the enchantment level,</li>
  *   <li>enchanted books in nearby chiseled bookshelves steer the random picks.</li>
  * </ol>
  */
@@ -207,8 +207,9 @@ public final class EnchantingLogic {
 			int enchantLevel = maxMainLevel(tier, main);
 			int xpCost = config.xpPerEnchantmentLevel * enchantLevel + (enchanted ? passPenalty(passes) : 0);
 			int maxExtras = EnchantingConfig.at(config.tierMaxExtras, tier);
-			// Lapis and catalysts cost the same, and climb steeply with the enchantment's level.
-			int materialCost = config.materialCost(enchantLevel);
+			// Lapis climbs with the enchantment's level; each guaranteed enchant uses up one template.
+			int lapisCost = config.materialCost(enchantLevel);
+			int catalystCost = Math.max(1, config.catalystsPerEnchant);
 			anyExtras = Math.max(anyExtras, maxExtras);
 
 			TableStatus status = TableStatus.READY;
@@ -222,15 +223,15 @@ public final class EnchantingLogic {
 				status = TableStatus.ALREADY_STRONGER;
 			} else if (!compatible) {
 				status = TableStatus.INCOMPATIBLE;
-			} else if (lapisCount < materialCost) {
+			} else if (lapisCount < lapisCost) {
 				status = TableStatus.NEED_LAPIS;
-			} else if (catalystCount < materialCost) {
+			} else if (catalystCount < catalystCost) {
 				status = TableStatus.NEED_CATALYST;
 			}
 
 			// Like vanilla, the row's big number is the level you need; the tier's level, or the cost if that's higher.
 			int requirement = Math.max(EnchantingConfig.at(config.tierPlayerLevel, tier), xpCost);
-			options.add(new Option(tier, status, enchantLevel, xpCost, materialCost, maxExtras, requirement, 0, null, 0, materialCost));
+			options.add(new Option(tier, status, enchantLevel, xpCost, lapisCost, maxExtras, requirement, 0, null, 0, catalystCost));
 		}
 
 		Holder<Enchantment> hint = null;

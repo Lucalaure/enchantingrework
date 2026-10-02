@@ -1,0 +1,13 @@
+{
+  "item": "enchantingrework:holy_enchanting_template",
+  "theme": "holy",
+  "enchantments": [
+    "minecraft:smite",
+    "#enchantingrework:catalyst/holy"
+  ],
+  "inscription": {
+    "material": "minecraft:glistering_melon_slice",
+    "core": "minecraft:diamond",
+    "filler": "minecraft:amethyst_shard"
+  }
+}

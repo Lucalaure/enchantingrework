@@ -1,8 +1,0 @@
-{
-  "item": "minecraft:fermented_spider_eye",
-  "theme": "venom",
-  "enchantments": [
-    "minecraft:bane_of_arthropods",
-    "#enchantingrework:catalyst/venom"
-  ]
-}

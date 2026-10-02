@@ -1,9 +1,0 @@
-{
-  "item": "minecraft:slime_ball",
-  "theme": "force",
-  "enchantments": [
-    "minecraft:knockback",
-    "minecraft:punch",
-    "#enchantingrework:catalyst/force"
-  ]
-}

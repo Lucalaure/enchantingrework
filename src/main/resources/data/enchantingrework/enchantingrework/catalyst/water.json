@@ -1,0 +1,15 @@
+{
+  "item": "enchantingrework:water_enchanting_template",
+  "theme": "water",
+  "enchantments": [
+    "minecraft:respiration",
+    "minecraft:depth_strider",
+    "minecraft:impaling",
+    "#enchantingrework:catalyst/water"
+  ],
+  "inscription": {
+    "material": "minecraft:prismarine_crystals",
+    "core": "minecraft:diamond",
+    "filler": "minecraft:amethyst_shard"
+  }
+}

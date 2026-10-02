@@ -1,0 +1,13 @@
+{
+  "item": "enchantingrework:guard_enchanting_template",
+  "theme": "guard",
+  "enchantments": [
+    "minecraft:protection",
+    "#enchantingrework:catalyst/guard"
+  ],
+  "inscription": {
+    "material": "minecraft:iron_ingot",
+    "core": "minecraft:diamond",
+    "filler": "minecraft:amethyst_shard"
+  }
+}

@@ -5,6 +5,12 @@ import lucalaure1007.enchantingrework.catalyst.Catalyst;
 import lucalaure1007.enchantingrework.config.EnchantingConfig;
 import lucalaure1007.enchantingrework.network.ConfigSyncPayload;
 import lucalaure1007.enchantingrework.table.ReworkedEnchantmentMenu;
+import lucalaure1007.enchantingrework.template.EnchantingTemplates;
+import lucalaure1007.enchantingrework.template.InscribeTemplateRecipe;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
@@ -47,6 +53,12 @@ public class EnchantingRework implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		CONFIG = EnchantingConfig.load();
+		EnchantingTemplates.register();
+		Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("inscribe_template"), InscribeTemplateRecipe.SERIALIZER);
+		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.INGREDIENTS).register(output ->
+			output.insertAfter(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE, EnchantingTemplates.BY_THEME.values().toArray(new ItemLike[0])));
+		ServerLifecycleEvents.SERVER_STARTING.register(InscribeTemplateRecipe::setServer);
+		ServerLifecycleEvents.SERVER_STOPPED.register(server -> InscribeTemplateRecipe.setServer(null));
 		DynamicRegistries.registerSynced(Catalyst.REGISTRY_KEY, Catalyst.CODEC);
 		PayloadTypeRegistry.clientboundPlay().register(ConfigSyncPayload.TYPE, ConfigSyncPayload.CODEC);
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> sender.sendPacket(new ConfigSyncPayload(CONFIG.toJson())));

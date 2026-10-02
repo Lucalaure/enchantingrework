@@ -1,0 +1,15 @@
+{
+  "item": "enchantingrework:fortune_enchanting_template",
+  "theme": "fortune",
+  "enchantments": [
+    "minecraft:fortune",
+    "minecraft:looting",
+    "minecraft:luck_of_the_sea",
+    "#enchantingrework:catalyst/fortune"
+  ],
+  "inscription": {
+    "material": "minecraft:emerald",
+    "core": "minecraft:echo_shard",
+    "filler": "minecraft:amethyst_shard"
+  }
+}

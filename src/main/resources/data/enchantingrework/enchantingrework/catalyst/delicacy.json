@@ -1,0 +1,13 @@
+{
+  "item": "enchantingrework:delicacy_enchanting_template",
+  "theme": "delicacy",
+  "enchantments": [
+    "minecraft:silk_touch",
+    "#enchantingrework:catalyst/delicacy"
+  ],
+  "inscription": {
+    "material": "minecraft:cobweb",
+    "core": "minecraft:echo_shard",
+    "filler": "minecraft:amethyst_shard"
+  }
+}

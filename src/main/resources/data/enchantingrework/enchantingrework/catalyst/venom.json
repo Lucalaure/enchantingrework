@@ -1,0 +1,13 @@
+{
+  "item": "enchantingrework:venom_enchanting_template",
+  "theme": "venom",
+  "enchantments": [
+    "minecraft:bane_of_arthropods",
+    "#enchantingrework:catalyst/venom"
+  ],
+  "inscription": {
+    "material": "minecraft:fermented_spider_eye",
+    "core": "minecraft:diamond",
+    "filler": "minecraft:amethyst_shard"
+  }
+}

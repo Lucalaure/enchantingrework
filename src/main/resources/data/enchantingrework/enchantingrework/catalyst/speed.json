@@ -1,0 +1,15 @@
+{
+  "item": "enchantingrework:speed_enchanting_template",
+  "theme": "speed",
+  "enchantments": [
+    "minecraft:efficiency",
+    "minecraft:quick_charge",
+    "minecraft:lure",
+    "#enchantingrework:catalyst/speed"
+  ],
+  "inscription": {
+    "material": "minecraft:redstone",
+    "core": "minecraft:paper",
+    "filler": "minecraft:amethyst_shard"
+  }
+}

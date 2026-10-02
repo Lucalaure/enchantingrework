@@ -1,0 +1,15 @@
+{
+  "item": "enchantingrework:edge_enchanting_template",
+  "theme": "edge",
+  "enchantments": [
+    "minecraft:sharpness",
+    "minecraft:power",
+    "minecraft:piercing",
+    "#enchantingrework:catalyst/edge"
+  ],
+  "inscription": {
+    "material": "minecraft:quartz",
+    "core": "minecraft:diamond",
+    "filler": "minecraft:amethyst_shard"
+  }
+}
