@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/logo.png" width="160" alt="Enchanting Rework logo"></p>
+
 # Enchanting Rework
 
 A Fabric mod for Minecraft 26.3 that implements the **Enchanting** section of
