@@ -11,6 +11,14 @@ All notable changes to Enchanting Rework. Versions follow [Semantic Versioning](
 - **Endurance** now takes a Diamond core (was Paper).
 - Speed and Endurance templates are now uncommon (aqua name), like the other diamond-core templates.
 
+### JEI
+- Inscribing recipes now appear in JEI's normal Crafting tab instead of a separate Inscribing tab.
+- Looking up an enchanted book of any level, or with several enchantments, now finds every template it can make,
+  with that exact book shown in the recipe.
+
+### Other
+- New mod logo.
+
 ## [1.1.0] - 2026-10-02
 
 ### Enchanting templates
@@ -22,8 +30,7 @@ All notable changes to Enchanting Rework. Versions follow [Semantic Versioning](
 - A guaranteed enchant uses up **one template**, plus lapis on the 1 / 2 / 3 / 5 / 8 curve and XP.
 - Templates are named for what they grant ("Edge Enchantment") with vanilla smithing-template style tooltips, and sit in
   the Ingredients creative tab. Enchanted books list the templates they can make.
-- Optional [JEI](https://modrinth.com/mod/jei) support: inscribing recipes in JEI's Crafting tab, found from any enchanted
-  book they accept (any level, multiple enchantments), plus an info page per template.
+- Optional [JEI](https://modrinth.com/mod/jei) support: an Inscribing recipe page per template, plus info pages.
 - Catalyst datapack entries gain an optional `inscription` field; new `catalystsPerEnchant` config option.
 
 ### Table
