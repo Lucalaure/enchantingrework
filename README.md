@@ -53,14 +53,14 @@ You never find templates: you **inscribe** them from an enchanted book at a craf
 
 | Template | Book (any level) | Material | Core | Gives |
 | --- | --- | --- | --- | --- |
-| Endurance | Unbreaking | Obsidian | Paper | Unbreaking |
-| Speed | Efficiency, Quick Charge, Lure | Redstone | Paper | Efficiency · Quick Charge · Lure |
 | Air | Feather Falling | Feather | Paper | Feather Falling |
 | Force | Knockback, Punch | Slime ball | Paper | Knockback · Punch |
 | Blast | Blast Protection | Gunpowder | Paper | Blast Protection |
 | Deflect | Projectile Protection | Armadillo scute | Paper | Projectile Protection |
-| Edge | Sharpness, Power, Piercing | Quartz | Diamond | Sharpness · Power · Piercing |
-| Guard | Protection | Iron ingot | Diamond | Protection |
+| Endurance | Unbreaking | Obsidian | Diamond | Unbreaking |
+| Speed | Efficiency, Quick Charge, Lure | Block of Redstone | Diamond | Efficiency · Quick Charge · Lure |
+| Edge | Sharpness, Power, Piercing | Block of Quartz | Diamond | Sharpness · Power · Piercing |
+| Guard | Protection | Block of Iron | Diamond | Protection |
 | Fire | Fire Aspect, Flame, Fire Protection | Blaze powder | Diamond | Fire Aspect · Flame · Fire Protection |
 | Water | Respiration, Depth Strider, Impaling | Prismarine crystals | Diamond | Respiration · Depth Strider · Impaling |
 | Holy | Smite | Glistering melon slice | Diamond | Smite |

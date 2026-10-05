@@ -8,8 +8,8 @@
     "#enchantingrework:catalyst/speed"
   ],
   "inscription": {
-    "material": "minecraft:redstone",
-    "core": "minecraft:paper",
+    "material": "minecraft:redstone_block",
+    "core": "minecraft:diamond",
     "filler": "minecraft:amethyst_shard"
   }
 }

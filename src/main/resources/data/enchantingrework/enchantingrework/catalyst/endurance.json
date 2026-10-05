@@ -7,7 +7,7 @@
   ],
   "inscription": {
     "material": "minecraft:obsidian",
-    "core": "minecraft:paper",
+    "core": "minecraft:diamond",
     "filler": "minecraft:amethyst_shard"
   }
 }

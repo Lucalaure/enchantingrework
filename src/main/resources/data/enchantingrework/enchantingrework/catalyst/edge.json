@@ -8,7 +8,7 @@
     "#enchantingrework:catalyst/edge"
   ],
   "inscription": {
-    "material": "minecraft:quartz",
+    "material": "minecraft:quartz_block",
     "core": "minecraft:diamond",
     "filler": "minecraft:amethyst_shard"
   }

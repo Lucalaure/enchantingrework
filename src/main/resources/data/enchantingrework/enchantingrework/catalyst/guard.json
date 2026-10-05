@@ -6,7 +6,7 @@
     "#enchantingrework:catalyst/guard"
   ],
   "inscription": {
-    "material": "minecraft:iron_ingot",
+    "material": "minecraft:iron_block",
     "core": "minecraft:diamond",
     "filler": "minecraft:amethyst_shard"
   }

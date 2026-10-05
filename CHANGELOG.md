@@ -2,6 +2,15 @@
 
 All notable changes to Enchanting Rework. Versions follow [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+
+### Inscribing recipes
+- **Edge** now takes Blocks of Quartz instead of Nether Quartz.
+- **Guard** (Protection) now takes Blocks of Iron instead of Iron Ingots.
+- **Speed** now takes Blocks of Redstone and a Diamond core (was Redstone Dust and Paper).
+- **Endurance** now takes a Diamond core (was Paper).
+- Speed and Endurance templates are now uncommon (aqua name), like the other diamond-core templates.
+
 ## [1.1.0] - 2026-10-02
 
 ### Enchanting templates

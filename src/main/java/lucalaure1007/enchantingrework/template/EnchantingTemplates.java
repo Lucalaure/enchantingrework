@@ -25,13 +25,13 @@ public final class EnchantingTemplates {
 
 	public static void register() {
 		// Common: paper core.
-		register("endurance", Rarity.UNCOMMON);
-		register("speed", Rarity.UNCOMMON);
 		register("air", Rarity.UNCOMMON);
 		register("force", Rarity.UNCOMMON);
 		register("blast", Rarity.UNCOMMON);
 		register("deflect", Rarity.UNCOMMON);
 		// Uncommon: diamond core.
+		register("endurance", Rarity.RARE);
+		register("speed", Rarity.RARE);
 		register("edge", Rarity.RARE);
 		register("guard", Rarity.RARE);
 		register("fire", Rarity.RARE);
