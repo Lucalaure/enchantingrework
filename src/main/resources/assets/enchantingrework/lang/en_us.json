@@ -57,7 +57,6 @@
   "enchantingrework.tooltip.can_inscribe": "Can inscribe: %s",
   "enchantingrework.template": "Enchanting Template",
   "enchantingrework.template.grants": "Grants:",
-  "enchantingrework.jei.inscribing": "Inscribing",
   "enchantingrework.jei.book_kept": "The book is given back",
   "enchantingrework.jei.template_info": "Place in the enchanting table's third slot to guarantee one of: %s. Each enchant uses up one template. Inscribe more at a crafting table: the enchanted book is given back.",
   "enchantingrework.status.already_enchanted": "Already enchanted",

@@ -13,7 +13,8 @@ All notable changes to Enchanting Rework. Versions follow [Semantic Versioning](
 - A guaranteed enchant uses up **one template**, plus lapis on the 1 / 2 / 3 / 5 / 8 curve and XP.
 - Templates are named for what they grant ("Edge Enchantment") with vanilla smithing-template style tooltips, and sit in
   the Ingredients creative tab. Enchanted books list the templates they can make.
-- Optional [JEI](https://modrinth.com/mod/jei) support: an Inscribing recipe page per template, plus info pages.
+- Optional [JEI](https://modrinth.com/mod/jei) support: inscribing recipes in JEI's Crafting tab, found from any enchanted
+  book they accept (any level, multiple enchantments), plus an info page per template.
 - Catalyst datapack entries gain an optional `inscription` field; new `catalystsPerEnchant` config option.
 
 ### Table

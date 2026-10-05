@@ -73,8 +73,9 @@ You never find templates: you **inscribe** them from an enchanted book at a craf
 - Treasure books (Mending, Frost Walker, Soul Speed, Swift Sneak, Wind Burst) and curses can't be inscribed.
 - Templates are named for what they grant ("Edge Enchantment") and laid out like vanilla smithing templates.
   Enchanted books list the templates they can make ("Can inscribe: Edge, Endurance").
-- With [JEI](https://modrinth.com/mod/jei) installed, each template has an **Inscribing** recipe page (the books
-  that work cycle in the middle slot) and an info page. JEI is optional.
+- With [JEI](https://modrinth.com/mod/jei) installed, inscribing recipes appear in JEI's normal **Crafting** tab.
+  Looking up any enchanted book (any level, any number of enchantments) shows every template it can make, with that
+  book in the middle slot. Each template also has an info page. JEI is optional.
 
 ### Datapacks
 
